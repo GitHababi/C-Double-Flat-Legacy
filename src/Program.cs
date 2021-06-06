@@ -5,41 +5,70 @@ using System.Text;
 using System.Threading.Tasks;
 using C_Double_Flat.Core;
 using System.IO;
-
+using System.Web.Script.Serialization;
 namespace C_Double_Flat
 {
     class Program
     {
         public static void Main(string[] args)
         {
-            
-            
-            while (true)
+            if (args.Length > 0)
             {
-                var Tokens = new List<Token>();
-                string input = Console.ReadLine();
-
-                if (File.Exists(input)) 
+                List<Token> Tokens = new List<Token>();
+                if (File.Exists(args[0]))
                 {
-                    new Lexer(File.ReadAllText(input), out Tokens);
-                }
-                else
-                {
-                    new Lexer(input, out Tokens);
-                }
-
-                for (int x = 0; x < Tokens.Count; x++)
-                {
-                    Token token = Tokens[x];
-                    if (token.Type != TokenType.ERROR)
+                    try
                     {
-                        Console.WriteLine(token.ToString());
+
+
+                        Tokens = Lexer.Tokenize(File.ReadAllText(args[0]));
+
+                        Console.WriteLine("Lexer Result: \n");
+
+                        foreach (Token token in Tokens) Console.WriteLine(token);
+
+                        Console.WriteLine("Parser Result: \n");
+
+                        Console.WriteLine(ExpressionParser.ParseLR(Tokens));
+                    }
+                    catch (Exception e)
+                    {
+                        Console.WriteLine(e.Message);
+                    }
+                }
+
+            }
+
+
+
+            while ("" == "")
+            {
+                Console.ForegroundColor = ConsoleColor.Yellow;
+                Console.Write(">>>");
+                Console.ResetColor();
+                string input = Console.ReadLine();
+                try
+                {
+                    var Tokens = new List<Token>();
+                    if (File.Exists(input))
+                    {
+                        Tokens = Lexer.Tokenize(File.ReadAllText(input));
                     }
                     else
                     {
-                        Console.WriteLine("ERROR: " + token.Value);
+                        Tokens = Lexer.Tokenize(input);
                     }
+                    Console.WriteLine("Lexer Result: \n");
+
+                    foreach (Token token in Tokens) Console.WriteLine(token);
+
+
+                    Console.WriteLine("Parser Result: \n");
+
+                    Console.WriteLine(ExpressionParser.ParseLR(Tokens));
                 }
+                catch (Exception e) { Console.WriteLine(e.Message); }
+
             }
         }
     }

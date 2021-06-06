@@ -1,0 +1,36 @@
+﻿Just some baseline rules for cbb
+I have no clue how to parse, so this'll be fun.
+
+Type: 
+LR(k) Predictive parser
+
+statement: 
+| IDENTIFIER ':' expression ';'
+| IDENTIFIER ':' statement '<-' '(' args ')' ';'
+| expression ';'
+| 'loop' '(' condition ')' statement
+| 'if' '(' condition ')' statement
+| 'else' statement
+| 'return' expression ';'
+| ';'
+| '{' statement '}'
+;
+
+expression:
+| IDENTIFIER
+| IDENTIFIER '<-' '(' args ')'
+| STRING_LITERAL
+| NUMERICAL_LITERAL
+| BOOL_LITERAL
+| '(' expression ')'
+| expression ['+','-','/','*'] expression 
+;
+
+condition: expression ['=','!=','<','>','<=','>='] expression ;
+
+args:
+| expression
+| expression ',' args
+;
+
+the [] means any of the array

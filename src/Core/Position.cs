@@ -6,6 +6,10 @@ using System.Threading.Tasks;
 
 namespace C_Double_Flat.Core
 {
+    public class PositionHelper
+    {
+        public static readonly Position None = new Position(0,0,0);
+    }
     public struct Position
     {
         public int _index { get; private set; }
@@ -15,7 +19,7 @@ namespace C_Double_Flat.Core
         {
             _index = index;
             _line = line;
-            _col = col;
+            _col = col - 1;
         }
 
         public void Advance(char currentChar)

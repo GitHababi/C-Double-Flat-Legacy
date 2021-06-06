@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Text.RegularExpressions;
-
+using C_Double_Flat.Errors;
 namespace C_Double_Flat.Core
 {
     public class Lexer
@@ -13,15 +13,12 @@ namespace C_Double_Flat.Core
         private Position _position; //Read head position
         private char _currentChar;
 
-        public Lexer(string text, out List<Token> output)
+        public static List<Token> Tokenize(string text)
         {
-            _script = text.ToCharArray();
-            _position = new Position(-1, 1, 1);
-            _currentChar = default;
-            Advance();
-            output = makeTokens();
+            return new Lexer(text).GetTokens();
         }
-        public Lexer(string text)
+
+        private Lexer(string text)
         {
             _script = text.ToCharArray();
             _position = new Position(-1, 1, 1);
@@ -53,43 +50,35 @@ namespace C_Double_Flat.Core
                 switch (_currentChar)
                 {
                     case '+':
-                        tokenList.Add(new Token(TokenType.PLUS));
+                        tokenList.Add(new Token(TokenType.ADD, _position));
                         Advance();
                         break;
                     case '-':
-                        tokenList.Add(new Token(TokenType.MINUS));
+                        tokenList.Add(new Token(TokenType.SUB, _position));
                         Advance();
                         break;
                     case '/':
-                        tokenList.Add(new Token(TokenType.DIV));
+                        tokenList.Add(new Token(TokenType.DIV, _position));
                         Advance();
                         break;
                     case '*':
-                        tokenList.Add(new Token(TokenType.MUL));
-                        Advance();
-                        break;
-                    case '%':
-                        tokenList.Add(new Token(TokenType.MOD));
-                        Advance();
-                        break;
-                    case '^':
-                        tokenList.Add(new Token(TokenType.POW));
+                        tokenList.Add(new Token(TokenType.MUL, _position));
                         Advance();
                         break;
                     case '(':
-                        tokenList.Add(new Token(TokenType.LPAREN));
+                        tokenList.Add(new Token(TokenType.LPAREN, _position));
                         Advance();
                         break;
                     case ')':
-                        tokenList.Add(new Token(TokenType.RPAREN));
+                        tokenList.Add(new Token(TokenType.RPAREN, _position));
                         Advance();
                         break;
                     case ',':
-                        tokenList.Add(new Token(TokenType.COMMA));
+                        tokenList.Add(new Token(TokenType.COMMA, _position));
                         Advance();
                         break;
                     case '{':
-                        tokenList.Add(new Token(TokenType.LCURLY));
+                        tokenList.Add(new Token(TokenType.LCURLY, _position));
                         Advance();
                         break;
                     case '<':
@@ -101,61 +90,72 @@ namespace C_Double_Flat.Core
                             switch (_script[_position._index + 1])
                             {
                                 case '=':
-                                    tokenList.Add(new Token(TokenType.LESS_EQ));
+                                    tokenList.Add(new Token(TokenType.LESS_EQ, _position));
                                     Advance(2);
                                     break;
                                 case '-':
-                                    tokenList.Add(new Token(TokenType.INSRTOP));
+                                    tokenList.Add(new Token(TokenType.INSRT, _position));
                                     Advance(2);
                                     break;
                                 default:
-                                    tokenList.Add(new Token(TokenType.LESS));
+                                    tokenList.Add(new Token(TokenType.LESS, _position));
                                     Advance();
                                     break;
                             }
                         }
                         else
                         {
-                            tokenList.Add(new Token(TokenType.LESS));
+                            tokenList.Add(new Token(TokenType.LESS, _position));
                             Advance();
                         }
                         break;
                     case '>':
-                        if (_position._index - +1 != _script.Length)
+                        if (_position._index + 1 != _script.Length)
                         {
                             switch (_script[_position._index + 1])
                             {
                                 case '=':
-                                    tokenList.Add(new Token(TokenType.GRTR_EQ));
+                                    tokenList.Add(new Token(TokenType.GRTR_EQ, _position));
                                     Advance(2);
                                     break;
                                 default:
-                                    tokenList.Add(new Token(TokenType.GRTR));
+                                    tokenList.Add(new Token(TokenType.GRTR, _position));
                                     Advance();
                                     break;
                             }
                         }
                         else
                         {
-                            tokenList.Add(new Token(TokenType.GRTR));
+                            tokenList.Add(new Token(TokenType.GRTR, _position));
                             Advance();
                         }
 
                         break;
+                    case '!':
+                        if (_position._index + 1 != _script.Length)
+                        {
+                            if (_script[_position._index + 1] == '=') { tokenList.Add(new Token(TokenType.NOT_EQAL, _position)); Advance(2); }
+                            else throw new TokenException(_position, _currentChar);
+                        }
+                        else
+                        {
+                            throw new TokenException(_position, _currentChar);
+                        }
+                        break;
                     case '}':
-                        tokenList.Add(new Token(TokenType.RCURLY));
+                        tokenList.Add(new Token(TokenType.RCURLY, _position));
                         Advance();
                         break;
                     case '=':
-                        tokenList.Add(new Token(TokenType.EQAL));
+                        tokenList.Add(new Token(TokenType.EQAL, _position));
                         Advance();
                         break;
                     case ':':
-                        tokenList.Add(new Token(TokenType.ASSGNOP));
+                        tokenList.Add(new Token(TokenType.ASSGN, _position));
                         Advance();
                         break;
                     case ';':
-                        tokenList.Add(new Token(TokenType.NXTLNOP));
+                        tokenList.Add(new Token(TokenType.NXTLN, _position));
                         Advance();
                         break;
                     case '"':
@@ -173,8 +173,7 @@ namespace C_Double_Flat.Core
                             {
                                 if (!char.IsWhiteSpace(_currentChar) && _currentChar != default)
                                 {
-                                    tokenList.Add(new Token(TokenType.ERROR, "Unknown Token: '" + _currentChar + "' Col: " + _position._col + " Line: " + _position._line));
-                                    Advance();
+                                    throw new TokenException(_position, _currentChar);
                                 }
                                 else
                                 {
@@ -198,8 +197,8 @@ namespace C_Double_Flat.Core
                 accumulator += _currentChar;
                 Advance();
             }
-            if (foundEnd) return new Token(TokenType.STRING, accumulator);
-            else return new Token(TokenType.ERROR, "String Literal was not terminated." + " Col: " + _position._col + " Line: " + _position._line);
+            if (foundEnd) return new Token(TokenType.STRING, accumulator, _position);
+            else throw new TerminatingStringException(_position);
         }
 
         private Token keywordFinder()
@@ -210,21 +209,19 @@ namespace C_Double_Flat.Core
             switch (fromCurrent)
             {
                 case "if":
-                    return new Token(TokenType.IF);
+                    return new Token(TokenType.IF, _position);
                 case "else":
-                    return new Token(TokenType.ELSE);
+                    return new Token(TokenType.ELSE, _position);
                 case "loop":
-                    return new Token(TokenType.LOOP);
-                case "given":
-                    return new Token(TokenType.GIVEN);
+                    return new Token(TokenType.LOOP, _position);
                 case "return":
-                    return new Token(TokenType.RETURN);
+                    return new Token(TokenType.RETURN, _position);
                 case "true":
-                    return new Token(TokenType.BOOL, "true");
+                    return new Token(TokenType.BOOL, "true", _position);
                 case "false":
-                    return new Token(TokenType.BOOL, "false");
+                    return new Token(TokenType.BOOL, "false", _position);
                 default:
-                    return new Token(TokenType.IDENTIFIER, fromCurrent);
+                    return new Token(TokenType.IDENTIFIER, fromCurrent, _position);
             }
         }
 
@@ -238,7 +235,7 @@ namespace C_Double_Flat.Core
                 {
                     if (dotCount > 0)
                     {
-                        return new Token(TokenType.ERROR, "More than one '.' found in decimal number." + " Col: " + _position._col + " Line: " + _position._line);
+                        throw new NumberDotException(_position);
                     }
                     value += '.';
                     dotCount += 1;
@@ -251,7 +248,7 @@ namespace C_Double_Flat.Core
                 }
 
             }
-            return new Token((dotCount == 1) ? TokenType.DOUBLE : TokenType.INT, value);
+            return new Token(TokenType.NUMBER, value, _position);
         }
     }
 }
