@@ -7,15 +7,15 @@ using System.Web.Script.Serialization;
 
 namespace C_Double_Flat.Core
 {
-    public class ExpNode
+    public class ExpressionNode
     {
         public TokenType Type;
         public string Value;
-        public ExpNode Left;
-        public ExpNode Right;
+        public ExpressionNode Left;
+        public ExpressionNode Right;
 
-        public ExpNode(Token data) { Type = data.Type; Value = data.Value; }
-        public ExpNode() { }
+        public ExpressionNode(Token data) { Type = data.Type; Value = data.Value; }
+        public ExpressionNode() { }
 
         public override string ToString()
         {
@@ -28,15 +28,15 @@ namespace C_Double_Flat.Core
             else output = String.Format("({0}, {1}, {2})", left, this.Type, right);
             return output;
         }
-        public static readonly ExpNode None = new ExpNode(TokenHelper.None);
+        public static readonly ExpressionNode None = new ExpressionNode(TokenHelper.None);
     }
 
 
-    public class FuncCallNode : ExpNode
+    public class FuncCallNode : ExpressionNode
     {
-        public List<ExpNode> Args;
+        public List<ExpressionNode> Args;
         public FuncCallNode(Token id) { this.Value = id.Value; this.Type = TokenType.FUNC_CALL; }
-        public FuncCallNode(Token id, List<ExpNode> Args) { this.Value = id.Value; this.Type = TokenType.FUNC_CALL; this.Args = Args; }
+        public FuncCallNode(Token id, List<ExpressionNode> Args) { this.Value = id.Value; this.Type = TokenType.FUNC_CALL; this.Args = Args; }
 
         public override string ToString()
         {

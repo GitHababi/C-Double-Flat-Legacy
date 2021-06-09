@@ -21,6 +21,14 @@ namespace C_Double_Flat.Errors
 
         public NumberDotException() { }
     }
+    public class IncompleteExpressionException : Exception
+    {
+        public IncompleteExpressionException(Position pos) :
+            base(String.Format("Incomplete statement at Line: {0} Column: {1}", pos._line, pos._col))
+        { }
+
+        public IncompleteExpressionException() { }
+    }
     public class TerminatingStringException : Exception
     {
         public TerminatingStringException() { }
@@ -45,5 +53,15 @@ namespace C_Double_Flat.Errors
     {
         public ExpectedTokenException() { }
         public ExpectedTokenException(Position pos, string type) : base(String.Format("Expected token type '{2}' at Line: {0} Column: {1}", pos._line, pos._col, type)) { }
+    }
+    public class EmptyConditionException : Exception
+    {
+        public EmptyConditionException() { }
+        public EmptyConditionException(Position pos) : base(String.Format("Empty condition block at Line: {0} Column: {1}", pos._line, pos._col)) { }
+    }
+    public class InvalidElseException : Exception
+    {
+        public InvalidElseException() { }
+        public InvalidElseException(Position pos) : base(String.Format("Else cannot start a statement: {0} Column: {1}", pos._line, pos._col)) { }
     }
 }

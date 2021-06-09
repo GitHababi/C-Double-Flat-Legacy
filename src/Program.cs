@@ -4,8 +4,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using C_Double_Flat.Core;
+using C_Double_Flat.Core.Parser;
 using System.IO;
-using System.Web.Script.Serialization;
+using System.Runtime.Serialization.Formatters.Binary;
+
 namespace C_Double_Flat
 {
     class Program
@@ -20,16 +22,18 @@ namespace C_Double_Flat
                     try
                     {
 
-
                         Tokens = Lexer.Tokenize(File.ReadAllText(args[0]));
 
-                        Console.WriteLine("Lexer Result: \n");
+                        Console.WriteLine("Lexer Result:");
 
                         foreach (Token token in Tokens) Console.WriteLine(token);
 
-                        Console.WriteLine("Parser Result: \n");
+                        Console.WriteLine("\nParser Result:");
 
-                        Console.WriteLine(ExpressionParser.ParseLR(Tokens));
+                        List<Statement> statements = StatementParser.Parse(Tokens, false);
+
+                        foreach (Statement statement in statements) Console.WriteLine(statement);
+
                     }
                     catch (Exception e)
                     {
@@ -58,17 +62,18 @@ namespace C_Double_Flat
                     {
                         Tokens = Lexer.Tokenize(input);
                     }
-                    Console.WriteLine("Lexer Result: \n");
+                    Console.WriteLine("Lexer Result:");
 
                     foreach (Token token in Tokens) Console.WriteLine(token);
 
 
-                    Console.WriteLine("Parser Result: \n");
+                    Console.WriteLine("\nParser Result:");
 
-                    Console.WriteLine(ExpressionParser.ParseLR(Tokens));
+                    List<Statement> statements = StatementParser.Parse(Tokens, false);
+
+                    foreach (Statement statement in statements) Console.WriteLine(statement);
                 }
                 catch (Exception e) { Console.WriteLine(e.Message); }
-
             }
         }
     }

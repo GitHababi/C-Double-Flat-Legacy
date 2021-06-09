@@ -42,20 +42,25 @@
     <Reference Include="System.Web.Extensions" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="src\Core\ConditionNode.cs" />
+    <Compile Include="src\Core\Nodes\ConditionNode.cs" />
+    <Compile Include="src\Core\Parser\ConditionParser.cs" />
+    <Compile Include="src\Core\Parser\FunctionCallParser.cs" />
     <Compile Include="src\Core\Statement.cs" />
-    <Compile Include="src\Core\StatementParser.cs" />
+    <Compile Include="src\Core\Parser\StatementParser.cs" />
     <Compile Include="src\Errors\Errors.cs" />
     <Compile Include="src\Core\Lexer.cs" />
-    <Compile Include="src\Core\ExpressionParser.cs" />
+    <Compile Include="src\Core\Parser\ExpressionParser.cs" />
     <Compile Include="src\Core\Position.cs" />
     <Compile Include="src\Core\Token.cs" />
     <Compile Include="src\Program.cs" />
-    <Compile Include="src\Core\ExpNode.cs" />
+    <Compile Include="src\Core\Nodes\ExpressionNode.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="c_sharp_c_seeklogo_com_HJn_icon.ico" />
     <Content Include="Rules.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="src\Core\Runtime\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

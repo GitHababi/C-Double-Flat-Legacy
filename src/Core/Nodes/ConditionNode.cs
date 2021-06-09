@@ -9,8 +9,8 @@ namespace C_Double_Flat.Core
     public class ConditionNode
     {
         public TokenType Type;
-        public ExpNode Left;
-        public ExpNode Right;
+        public ExpressionNode Left;
+        public ExpressionNode Right;
         public ConditionNode(Token data) { Type = data.Type; }
         public ConditionNode(TokenType Type) { this.Type = Type; }
         public ConditionNode() {}

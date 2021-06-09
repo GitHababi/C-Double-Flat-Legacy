@@ -8,7 +8,7 @@ namespace C_Double_Flat.Core
 {
     public static class TokenHelper
     {
-        public static readonly Token None = new Token(TokenType.NONE, new Position(0, 0, 0));
+        public static readonly Token None = new Token(TokenType.NONE, new Position(0, 0, 1));
 
         public static List<List<Token>> Split(List<Token> tokens, TokenType splitter)
         {
@@ -90,6 +90,35 @@ namespace C_Double_Flat.Core
             }
             if (index + 1 == index + gap) return new List<Token>();
             return tokens.ToArray().Skip(index + 1).Take(gap - 1).ToList();
+        }
+        public static int getMatchingBracket(List<Token> tokens, int index = 0)
+        {
+            if (tokens == null) throw new ArgumentNullException("tokens");
+            if (tokens.Count == 0) throw new Exception
+            ("Under no circumstances should this throw, YOUR INPUTS SHOULD BE MORE SANITIZED!!!");
+            Token currentToken = tokens[index];
+            while (currentToken.Type != TokenType.LCURLY)
+            {
+                if (index + 1 < tokens.Count) index++;
+                else return 0; // If at end and no LPAREN found, return itself as it has been fully resolved. 
+                currentToken = tokens[index];
+            }
+            int gap = 0;
+            int balance = 0;
+            while (gap + index < tokens.Count)
+            {
+                if (currentToken.Type == TokenType.LCURLY) balance++;
+                if (currentToken.Type == TokenType.RCURLY)
+                {
+                    balance--;
+                    if (balance == 0) break;
+                }
+                if (gap + index + 1 < tokens.Count) gap++;
+                else throw new TerminatingParenthesisException(tokens[index].Position);
+                // If at end and no RPAREN found, throw error as that is not supposed to happen.
+                currentToken = tokens[gap + index];
+            }
+            return gap;
         }
 
         public static List<Token> getFromParenthesis(List<Token> tokens, int index = 0)
