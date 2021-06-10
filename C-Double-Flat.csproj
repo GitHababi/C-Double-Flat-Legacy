@@ -45,8 +45,11 @@
     <Compile Include="src\Core\Nodes\ConditionNode.cs" />
     <Compile Include="src\Core\Parser\ConditionParser.cs" />
     <Compile Include="src\Core\Parser\FunctionCallParser.cs" />
+    <Compile Include="src\Core\Runtime\ExpressionInterpreter.cs" />
+    <Compile Include="src\Core\Runtime\Runtime.cs" />
     <Compile Include="src\Core\Statement.cs" />
     <Compile Include="src\Core\Parser\StatementParser.cs" />
+    <Compile Include="src\Core\Value.cs" />
     <Compile Include="src\Errors\Errors.cs" />
     <Compile Include="src\Core\Lexer.cs" />
     <Compile Include="src\Core\Parser\ExpressionParser.cs" />
@@ -59,8 +62,6 @@
     <Content Include="c_sharp_c_seeklogo_com_HJn_icon.ico" />
     <Content Include="Rules.txt" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="src\Core\Runtime\" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
