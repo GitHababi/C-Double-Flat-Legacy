@@ -24,10 +24,6 @@ namespace C_Double_Flat
 
                         Tokens = Lexer.Tokenize(File.ReadAllText(args[0]));
 
-                        Console.WriteLine("Lexer Result:");
-
-                        foreach (Token token in Tokens) Console.WriteLine(token);
-
                         Console.WriteLine("\nParser Result:");
 
                         List<Statement> statements = StatementParser.Parse(Tokens, false);
@@ -62,10 +58,6 @@ namespace C_Double_Flat
                     {
                         Tokens = Lexer.Tokenize(input);
                     }
-                    Console.WriteLine("Lexer Result:");
-
-                    foreach (Token token in Tokens) Console.WriteLine(token);
-
 
                     Console.WriteLine("\nParser Result:");
 

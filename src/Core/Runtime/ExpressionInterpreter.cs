@@ -5,80 +5,47 @@ using System.Text;
 using System.Threading.Tasks;
 using C_Double_Flat.Errors;
 
+// I should be working on this
+// but i am lazy
+
 namespace C_Double_Flat.Core.Runtime
 {
     public class ExpressionInterpreter
     {
-        private Value ExpNodeToValue(ExpressionNode final, ref Dictionary<string, Value> vars)
+        public static Value Interpret(ExpressionNode Root, ref Dictionary<string, Value> vars)
         {
-            Value output = new Value();
-
-            switch (final.Type)
-            {
-                case TokenType.NUMBER:
-                    output.DataType = ValueType.NUMBER;
-                    output.Data = final.Value;
-                    break;
-                case TokenType.STRING:
-                    output.DataType = ValueType.STRING;
-                    output.Data = final.Value;
-                    break;
-                case TokenType.BOOL:
-                    output.DataType = ValueType.BOOL;
-                    output.Data = final.Value;
-                    break;
-                case TokenType.IDENTIFIER:
-                    try
-                    {
-                        vars.TryGetValue(final.Value, out output); //Search dictionary for identifier and value
-                    }
-                    catch
-                    {
-                        output.Data = "0";
-                        output.DataType = ValueType.NUMBER;
-                    }
-                    break;
-                default: throw new InvalidTokenException();
-            }
-            return output;
+            return new ExpressionInterpreter(Root, ref vars).privateInterpret();
         }
 
-        private ExpressionNode VarExpNodeToExpNode(ExpressionNode var, ref Dictionary<string, Value> vars)
+        private Dictionary<string, Value> vars;
+        private ExpressionNode Root;
+
+        private ExpressionInterpreter(ExpressionNode Root, ref Dictionary<string, Value> vars) 
         {
-            if (var.Type != TokenType.IDENTIFIER) return var;
-            
-            
+            this.Root = Root;
+            this.vars = vars;
+        } 
 
-            ExpressionNode output = new ExpressionNode();
-            
-            try
+        private Value privateInterpret()
+        {
+            if 
+                (
+                Root.Type == TokenType.NUMBER ||
+                Root.Type == TokenType.STRING ||
+                Root.Type == TokenType.BOOL ||
+                Root.Type == TokenType.IDENTIFIER
+                ) return Utilities.GetValue(Root, ref vars);
+
+            if (Root.Equals(typeof(FuncCallNode))) ;
+
+            switch (Root.Type)
             {
-                Value v = new Value();
-                vars.TryGetValue(var.Value, out v); // This is the part that might throw.
+                case TokenType.ADD:
+                case TokenType.MUL:
+                case TokenType.SUB:
+                case TokenType.DIV:
 
-                output.Value = v.Data;
-
-                switch(v.DataType)
-                {
-                    case ValueType.NUMBER:
-                        output.Type = TokenType.NUMBER;
-                        break;
-                    case ValueType.BOOL:
-                        output.Type = TokenType.BOOL;
-                        break;
-                    case ValueType.STRING:
-                        output.Type = TokenType.STRING;
-                        break;
-                }
             }
-            catch
-            {
-                output.Value = "0";
-
-                output.Type = TokenType.NUMBER;
-            }
-
-            return output;
         }
     }
 }
