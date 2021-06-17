@@ -42,11 +42,13 @@
     <Reference Include="System.Web.Extensions" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="src\Core\Function.cs" />
     <Compile Include="src\Core\Nodes\ConditionNode.cs" />
     <Compile Include="src\Core\Parser\ConditionParser.cs" />
     <Compile Include="src\Core\Parser\FunctionCallParser.cs" />
+    <Compile Include="src\Core\Runtime\ConditionInterpreter.cs" />
     <Compile Include="src\Core\Runtime\ExpressionInterpreter.cs" />
-    <Compile Include="src\Core\Runtime\Runtime.cs" />
+    <Compile Include="src\Core\Runtime\Interpreter.cs" />
     <Compile Include="src\Core\Statement.cs" />
     <Compile Include="src\Core\Parser\StatementParser.cs" />
     <Compile Include="src\Core\Value.cs" />
@@ -55,6 +57,7 @@
     <Compile Include="src\Core\Parser\ExpressionParser.cs" />
     <Compile Include="src\Core\Position.cs" />
     <Compile Include="src\Core\Token.cs" />
+    <Compile Include="src\Libraries\Display.cs" />
     <Compile Include="src\Program.cs" />
     <Compile Include="src\Core\Nodes\ExpressionNode.cs" />
   </ItemGroup>

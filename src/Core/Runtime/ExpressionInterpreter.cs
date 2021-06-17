@@ -3,49 +3,135 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using C_Double_Flat.Errors;
 
-// I should be working on this
-// but i am lazy
 
 namespace C_Double_Flat.Core.Runtime
 {
     public class ExpressionInterpreter
     {
-        public static Value Interpret(ExpressionNode Root, ref Dictionary<string, Value> vars)
+        public static Value Interpret(ExpressionNode node)
         {
-            return new ExpressionInterpreter(Root, ref vars).privateInterpret();
+            return new ExpressionInterpreter(node).Private_Interpret();
         }
 
-        private Dictionary<string, Value> vars;
-        private ExpressionNode Root;
 
-        private ExpressionInterpreter(ExpressionNode Root, ref Dictionary<string, Value> vars) 
+        private ExpressionNode node;
+
+        private ExpressionInterpreter(ExpressionNode node)
         {
-            this.Root = Root;
-            this.vars = vars;
-        } 
+            this.node = node;
+        }
 
-        private Value privateInterpret()
+        private Value Private_Interpret()
         {
-            if 
-                (
-                Root.Type == TokenType.NUMBER ||
-                Root.Type == TokenType.STRING ||
-                Root.Type == TokenType.BOOL ||
-                Root.Type == TokenType.IDENTIFIER
-                ) return Utilities.GetValue(Root, ref vars);
+            Value output = new Value();
 
-            if (Root.Equals(typeof(FuncCallNode))) ;
-
-            switch (Root.Type)
+            switch (node.Type)
             {
                 case TokenType.ADD:
-                case TokenType.MUL:
+                    output = Add();
+                    break;
                 case TokenType.SUB:
+                    output = Subtract(); 
+                    break;
+                case TokenType.MUL:
+                    output = Multiply();
+                    break;
                 case TokenType.DIV:
-
+                    output = Divide();
+                    break;
+                case TokenType.STRING:
+                    output.Data = node.Value;
+                    output.DataType = ValueType.STRING;
+                    break;
+                case TokenType.BOOL:
+                    output.Data = node.Value;
+                    output.DataType = ValueType.BOOL;
+                    break;
+                case TokenType.NUMBER:
+                    output.DataType = ValueType.NUMBER;
+                    output.Data = node.Value;
+                    break;
             }
+
+            return output;
+        }
+        private Value Subtract()
+        {
+            Value left = ExpressionInterpreter.Interpret(node.Left);
+            Value right = ExpressionInterpreter.Interpret(node.Right);
+            
+            left = ValueHelper.CastValue(left, ValueType.NUMBER);
+            right = ValueHelper.CastValue(right, ValueType.NUMBER);
+
+            Value output = new Value();
+
+            output.Data = (Convert.ToDouble(left.Data) - Convert.ToDouble(right.Data)).ToString();
+            output.DataType = ValueType.NUMBER;
+
+            return output;
+        }
+
+        private Value Add()
+        {
+            Value left = ExpressionInterpreter.Interpret(node.Left);
+            Value right = ExpressionInterpreter.Interpret(node.Right);
+            ValueHelper.ResolveType(out left, out right, left, right);
+
+            Value output = new Value();
+
+            switch(left.DataType)
+            {
+                case ValueType.NUMBER:
+                    output.Data = (Convert.ToDouble(left.Data) + Convert.ToDouble(right.Data)).ToString();
+                    output.DataType = ValueType.NUMBER;
+                    break;
+                case ValueType.STRING:
+                    output.Data = left.Data + right.Data;
+                    output.DataType = ValueType.STRING;
+                    break;
+            }
+
+            return output;
+        }
+
+        private Value Multiply()
+        {
+            Value left = ExpressionInterpreter.Interpret(node.Left);
+            Value right = ExpressionInterpreter.Interpret(node.Right);
+            
+            left = ValueHelper.CastValue(left, ValueType.NUMBER);
+            right = ValueHelper.CastValue(right, ValueType.NUMBER);
+
+
+            Value output = new Value();
+
+            output.Data = (Convert.ToDouble(left.Data) * Convert.ToDouble(right.Data)).ToString();
+            output.DataType = ValueType.NUMBER;
+
+
+            return output;
+        }
+
+        private Value Divide()
+        {
+            Value left = ExpressionInterpreter.Interpret(node.Left);
+            Value right = ExpressionInterpreter.Interpret(node.Right);
+            
+            left =  ValueHelper.CastValue(left, ValueType.NUMBER);
+            right = ValueHelper.CastValue(right, ValueType.NUMBER);
+
+            if (Convert.ToDouble(right.Data) == 0)
+            {
+                throw new DivideByZeroException();
+            }
+
+            Value output = new Value();
+
+            output.Data = (Convert.ToDouble(left.Data) / Convert.ToDouble(right.Data)).ToString();
+            output.DataType = ValueType.NUMBER;
+
+            return output;
         }
     }
 }

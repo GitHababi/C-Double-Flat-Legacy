@@ -12,6 +12,15 @@ namespace C_Double_Flat.Core
         public object ReturnSelf() { return this; }
     }
 
+    public class NONE : Statement
+    {
+        public new StatementType Type = StatementType.NONE;
+        public override string ToString()
+        {
+            return "- NO-OP STATEMENT";
+        }
+    }
+
     public class IF : Statement
     {
         public ConditionNode Condition;

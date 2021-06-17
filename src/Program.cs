@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using C_Double_Flat.Core;
 using C_Double_Flat.Core.Parser;
+using C_Double_Flat.Core.Runtime;
 using System.IO;
 using System.Runtime.Serialization.Formatters.Binary;
 
@@ -26,9 +27,7 @@ namespace C_Double_Flat
 
                         Console.WriteLine("\nParser Result:");
 
-                        List<Statement> statements = StatementParser.Parse(Tokens, false);
-
-                        foreach (Statement statement in statements) Console.WriteLine(statement);
+                        ExpressionInterpreter.Interpret(ExpressionParser.ParseLR(Tokens));
 
                     }
                     catch (Exception e)
@@ -61,9 +60,7 @@ namespace C_Double_Flat
 
                     Console.WriteLine("\nParser Result:");
 
-                    List<Statement> statements = StatementParser.Parse(Tokens, false);
-
-                    foreach (Statement statement in statements) Console.WriteLine(statement);
+                    Console.WriteLine(Interpreter.Interpret(StatementParser.Parse(Tokens, false)));
                 }
                 catch (Exception e) { Console.WriteLine(e.Message); }
             }

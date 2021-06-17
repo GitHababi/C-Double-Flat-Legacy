@@ -84,7 +84,7 @@ namespace C_Double_Flat.Core.Parser
                     break;
                 case TokenType.NXTLN:
                     index++;
-                    return null; // No-op 
+                    return new NONE(); // No-op 
                 case TokenType.RETURN:
                     return ParseReturn();
                 case TokenType.IF:
@@ -101,9 +101,9 @@ namespace C_Double_Flat.Core.Parser
                     return ParseLoop();
                 default:
                     index++;
-                    return null;
+                    return new NONE();
             }
-            return null;
+            return new NONE();
         }
 
         private LOOP ParseLoop()
@@ -138,7 +138,7 @@ namespace C_Double_Flat.Core.Parser
             Expect(TokenType.LPAREN);
             List<Token> inParenthesis = TokenHelper.getFromParenthesis(tokens.Skip(index).ToList());
 
-            if (inParenthesis.Count == 0) throw new EmptyConditionException();
+            if (inParenthesis.Count == 0) throw new EmptyConditionException(tokens[index].Position);
 
             output.Condition = ConditionParser.Parse(inParenthesis);
 
