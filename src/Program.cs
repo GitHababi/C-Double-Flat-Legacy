@@ -21,6 +21,12 @@ namespace C_Double_Flat
             Interpreter.Functions.Add("disp_clear", new Libraries.Display_Clear());
             Interpreter.Functions.Add("dbug_funcs", new Libraries.Debug_Functions());
             Interpreter.Functions.Add("dbug_vars", new Libraries.Debug_Vars());
+            Interpreter.Functions.Add("math_round", new Libraries.Math_Round());
+            Interpreter.Functions.Add("math_rand", new Libraries.Math_Rand());
+            Interpreter.Functions.Add("file_read", new Libraries.File_Read());
+            Interpreter.Functions.Add("file_save", new Libraries.File_Save());
+
+
             if (args.Length > 0)
             {
                 List<Token> Tokens = new List<Token>();
@@ -31,7 +37,10 @@ namespace C_Double_Flat
 
                         Tokens = Lexer.Tokenize(File.ReadAllText(args[0]));
 
-                        Console.WriteLine(Interpreter.Interpret(StatementParser.Parse(Tokens, false)));
+                        string output = Interpreter.Interpret(StatementParser.Parse(Tokens, false)).Data + " <<<";
+                        Console.ForegroundColor = ConsoleColor.DarkGray;
+                        Console.WriteLine(output);
+                        Console.ResetColor();
 
                     }
                     catch (Exception e)
@@ -60,9 +69,10 @@ namespace C_Double_Flat
                         Tokens = Lexer.Tokenize(input);
                     }
 
-                    Console.WriteLine("\nResult:");
-
-                    Console.WriteLine(Interpreter.Interpret(StatementParser.Parse(Tokens, false)));
+                    string output = Interpreter.Interpret(StatementParser.Parse(Tokens, false)).Data + " <<<";
+                    Console.ForegroundColor = ConsoleColor.DarkGray;
+                    Console.WriteLine(output);
+                    Console.ResetColor();
                 }
                 catch (Exception e) { Console.WriteLine(e.Message); }
             }

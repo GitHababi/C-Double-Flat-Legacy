@@ -61,6 +61,22 @@ namespace C_Double_Flat.Core
             return output;
         }
 
+        public static Token ValueToToken(Value value)
+        {
+
+            switch (value.DataType)
+            {
+                case ValueType.BOOL:
+                    return new Token(TokenType.BOOL, value.Data, PositionHelper.None);
+                case ValueType.STRING:
+                    return new Token(TokenType.STRING, value.Data, PositionHelper.None);
+                case ValueType.NUMBER:
+                    return new Token(TokenType.NUMBER, value.Data, PositionHelper.None);
+            }
+
+            return TokenHelper.None;
+        }
+
         public static Value CastValue(Value value, ValueType type)
         {
             

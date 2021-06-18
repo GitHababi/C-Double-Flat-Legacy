@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace C_Double_Flat.Core.Runtime
 {
-    public class Interpreter
+    public partial class Interpreter
     {
         public static Dictionary<string, Value> globalVars = new Dictionary<string, Value>();
         public static Dictionary<string, IFunction> Functions = new Dictionary<string, IFunction>();
@@ -29,9 +29,10 @@ namespace C_Double_Flat.Core.Runtime
         {
             // my brain is melting
             Interpreter interpreter = new Interpreter(Statements, isScoped);
-            Value output = interpreter.Private_Interpret();
             interpreter.scopedVars = scope;
+            Value output = interpreter.Private_Interpret();
             Returned = interpreter.Didreturned;
+            scope = interpreter.scopedVars;
             return output;
 
         }
@@ -81,13 +82,13 @@ namespace C_Double_Flat.Core.Runtime
 
             if (isScoped)
             {
-                Value newValue = ExpressionInterpreter.Interpret(assigner.Value, ref this.scopedVars);
+                Value newValue = InterpretExpression(assigner.Value);
                 scopedVars.Remove(assigner.Identifier.Value);
                 scopedVars.Add(assigner.Identifier.Value, newValue);
             }
             else
             {
-                Value newValue = ExpressionInterpreter.Interpret(assigner.Value, ref this.scopedVars);
+                Value newValue = InterpretExpression(assigner.Value);
                 globalVars.Remove(assigner.Identifier.Value);
                 globalVars.Add(assigner.Identifier.Value, newValue);
             }
@@ -96,13 +97,14 @@ namespace C_Double_Flat.Core.Runtime
         private void RunExpression()
         {
             EXPRESSION expression = (EXPRESSION)statements[index];
-            ExpressionInterpreter.Interpret(expression.Value, ref this.scopedVars);
+            InterpretExpression(expression.Value);
         }
 
         private void AssignFunction()
         {
             FUNCTION func = (FUNCTION)statements[index];
             IFunction function = new User_Function(func.Arguments, func.Statements);
+            Functions.Remove(func.Identifier.Value);
             Functions.Add(func.Identifier.Value, function);
         }
 
@@ -112,7 +114,7 @@ namespace C_Double_Flat.Core.Runtime
 
             Didreturned = true;
 
-            return ExpressionInterpreter.Interpret(expression.Value, ref this.scopedVars);
+            return InterpretExpression(expression.Value);
         }
 
         private Value IfStatement(out bool didReturn)
@@ -121,7 +123,7 @@ namespace C_Double_Flat.Core.Runtime
 
 
 
-            if (ConditionInterpreter.Check(statement.Condition, ref this.scopedVars))
+            if (Check(statement.Condition))
             {
                 return Interpret(statement.If, ref scopedVars, out didReturn, isScoped);
             }
@@ -138,7 +140,7 @@ namespace C_Double_Flat.Core.Runtime
             Value output = Value.Default;
             didReturn = false;
 
-            while (ConditionInterpreter.Check(statement.Condition, ref this.scopedVars))
+            while (Check(statement.Condition))
             {
                 output = Interpret(statement.Statements, ref scopedVars, out didReturn, isScoped);
                 if (didReturn) break;
@@ -146,5 +148,7 @@ namespace C_Double_Flat.Core.Runtime
 
             return output;
         }
+
+
     }
 }

@@ -6,11 +6,8 @@ using System.Threading.Tasks;
 
 namespace C_Double_Flat.Core
 {
-    public class ConditionNode
+    public class ConditionNode : ExpressionNode
     {
-        public TokenType Type;
-        public ExpressionNode Left;
-        public ExpressionNode Right;
         public ConditionNode(Token data) { Type = data.Type; }
         public ConditionNode(TokenType Type) { this.Type = Type; }
         public ConditionNode() {}

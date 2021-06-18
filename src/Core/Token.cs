@@ -9,6 +9,10 @@ namespace C_Double_Flat.Core
     public static class TokenHelper
     {
         public static readonly Token None = new Token(TokenType.NONE, new Position(0, 0, 1));
+        public static readonly List<TokenType> conditions = new List<TokenType>() { TokenType.EQAL, TokenType.NOT_EQAL, 
+        TokenType.GRTR, TokenType.GRTR_EQ, TokenType.LESS, TokenType.LESS_EQ
+        };
+
 
         public static List<List<Token>> Split(List<Token> tokens, TokenType splitter)
         {
@@ -58,6 +62,18 @@ namespace C_Double_Flat.Core
             {
                 if (tokens[x].Type == token) return true;
             }
+            return false;
+        }
+        public static bool Contains(List<Token> tokens, List<TokenType> tokentypes)
+        {
+            foreach (TokenType tokent in tokentypes)
+            {
+                for (int x = 0; x < tokens.Count; x++)
+                {
+                    if (tokens[x].Type == tokent) return true;
+                }
+            }
+            
             return false;
         }
 

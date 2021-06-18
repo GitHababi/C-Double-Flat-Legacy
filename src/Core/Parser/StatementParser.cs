@@ -181,7 +181,10 @@ namespace C_Double_Flat.Core.Parser
 
             int endpoint = NextStatementEnding();
 
-            output.Value = ExpressionParser.ParseLR(tokens.Skip(index).Take(endpoint - index).ToList());
+            if (TokenHelper.Contains(tokens.Skip(index).Take(endpoint - index).ToList(), TokenHelper.conditions))
+                output.Value = ConditionParser.Parse(tokens.Skip(index).Take(endpoint - index).ToList());
+            else 
+                output.Value = ExpressionParser.ParseLR(tokens.Skip(index).Take(endpoint - index).ToList());
 
             index += endpoint - index;
 
@@ -198,7 +201,12 @@ namespace C_Double_Flat.Core.Parser
             index += 2; // Adding to index because we just skipped past an assignment token and identifier
 
             int endpoint = NextStatementEnding();
-            output.Value = ExpressionParser.ParseLR(tokens.Skip(index).Take(endpoint - index).ToList());
+
+            if (TokenHelper.Contains(tokens.Skip(index).Take(endpoint - index).ToList(), TokenHelper.conditions))
+                output.Value = ConditionParser.Parse(tokens.Skip(index).Take(endpoint - index).ToList());
+            else
+                output.Value = ExpressionParser.ParseLR(tokens.Skip(index).Take(endpoint - index).ToList());
+
             index = endpoint + 1;
             
             return output;

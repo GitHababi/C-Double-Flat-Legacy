@@ -6,48 +6,41 @@ using System.Threading.Tasks;
 
 namespace C_Double_Flat.Core.Runtime
 {
-    public class ConditionInterpreter
+    public partial class Interpreter
     {
-        public static bool Check(ConditionNode node, ref Dictionary<string, Value> scope)
+        private bool Check(ConditionNode node)
         {
-            Value l = ExpressionInterpreter.Interpret(node.Left, ref scope);
-            Value r = ExpressionInterpreter.Interpret(node.Right, ref scope);
+            Value l = InterpretExpression(node.Left);
+            Value r = InterpretExpression(node.Right);
             switch (node.Type)
             {
                 case TokenType.EQAL:
-                    return Equal(l, r);
+                    return l.Data == r.Data;
                 case TokenType.NOT_EQAL:
-                    return !Equal(l, r);
+                    return l.Data != r.Data;
                 case TokenType.LESS:
-                    return LessThan(l, r);
+                    l = ValueHelper.CastValue(l, ValueType.NUMBER);
+                    r = ValueHelper.CastValue(r, ValueType.NUMBER);
+
+                    return (Convert.ToDouble(l.Data) < Convert.ToDouble(r.Data));
                 case TokenType.GRTR_EQ:
-                    return !LessThan(l, r);
+                    l = ValueHelper.CastValue(l, ValueType.NUMBER);
+                    r = ValueHelper.CastValue(r, ValueType.NUMBER);
+
+                    return (Convert.ToDouble(l.Data) >= Convert.ToDouble(r.Data));
                 case TokenType.GRTR:
-                    return GreaterThan(l, r);
+                    l = ValueHelper.CastValue(l, ValueType.NUMBER);
+                    r = ValueHelper.CastValue(r, ValueType.NUMBER);
+
+                    return (Convert.ToDouble(l.Data) > Convert.ToDouble(r.Data));
                 case TokenType.LESS_EQ:
-                    return !GreaterThan(l, r);
+                    l = ValueHelper.CastValue(l, ValueType.NUMBER);
+                    r = ValueHelper.CastValue(r, ValueType.NUMBER);
+
+                    return (Convert.ToDouble(l.Data) <= Convert.ToDouble(r.Data));
                 default:
                     return false;
             }
-        }
-        private static bool Equal(Value l, Value r)
-        {
-            return l.Data == r.Data;
-        }
-        private static bool LessThan(Value l, Value r)
-        {
-            l = ValueHelper.CastValue(l, ValueType.NUMBER);
-            r = ValueHelper.CastValue(r, ValueType.NUMBER);
-
-            return (Convert.ToDouble(l.Data) < Convert.ToDouble(r.Data));
-        }
-
-        private static bool GreaterThan(Value l, Value r)
-        {
-            l = ValueHelper.CastValue(l, ValueType.NUMBER);
-            r = ValueHelper.CastValue(r, ValueType.NUMBER);
-
-            return (Convert.ToDouble(l.Data) > Convert.ToDouble(r.Data));
         }
 
     }

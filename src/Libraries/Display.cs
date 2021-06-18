@@ -9,13 +9,11 @@ namespace C_Double_Flat.Libraries
 {
     class Display_Echo : IFunction
     {
-        public Value Run(List<ExpressionNode> values, Dictionary<string, Value> Scope)
+        public Value Run(List<Value> Inputs)
         {
             string write = "";
-            List<Value> a = new List<Value>();
             
-            foreach (ExpressionNode v in values) a.Add(ExpressionInterpreter.Interpret(v, ref Scope));
-            foreach (Value v in a) write += v.Data;
+            foreach (Value v in Inputs) write += v.Data;
             Console.WriteLine(write);
             return Value.Default;
         }
@@ -23,14 +21,14 @@ namespace C_Double_Flat.Libraries
     
     class Display_Prompt : IFunction
     {
-        public Value Run(List<ExpressionNode> values, Dictionary<string, Value> Scope)
+        public Value Run(List<Value> Inputs)
         {
             return new Value(Console.ReadLine(),Core.ValueType.STRING);
         }
     }
     class Display_Clear : IFunction
     {
-        public Value Run(List<ExpressionNode> values, Dictionary<string, Value> Scope) { Console.Clear(); return Value.Default; }
+        public Value Run(List<Value> Inputs) { Console.Clear(); return Value.Default; }
     }
     
 }

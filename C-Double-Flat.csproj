@@ -59,6 +59,7 @@
     <Compile Include="src\Core\Token.cs" />
     <Compile Include="src\Libraries\Debug.cs" />
     <Compile Include="src\Libraries\Display.cs" />
+    <Compile Include="src\Libraries\File.cs" />
     <Compile Include="src\Libraries\Math.cs" />
     <Compile Include="src\Program.cs" />
     <Compile Include="src\Core\Nodes\ExpressionNode.cs" />

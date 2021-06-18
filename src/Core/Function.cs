@@ -9,7 +9,7 @@ namespace C_Double_Flat.Core
 {
     public interface IFunction
     {
-        Value Run(List<ExpressionNode> Inputs, Dictionary<string, Value> Scope);
+        Value Run(List<Value> Inputs);
     }
 
     public class User_Function : IFunction
@@ -24,14 +24,14 @@ namespace C_Double_Flat.Core
         private List<Token> args;
 
 
-        public Value Run(List<ExpressionNode> Inputs, Dictionary<string, Value> Scope)
+        public Value Run(List<Value> Inputs)
         {
             List <Statement> arguments = new List<Statement>();
             for (int i = 0; i < args.Count; i++)
             {
                 ASSIGN a = new ASSIGN();
                 a.Identifier = args[i];
-                a.Value = Inputs[i];
+                a.Value = new ExpressionNode(ValueHelper.ValueToToken(Inputs[i]));
                 arguments.Add(a);
             }
             arguments.AddRange(statements);

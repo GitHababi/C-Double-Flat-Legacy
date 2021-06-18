@@ -54,8 +54,44 @@ namespace C_Double_Flat.Core.Parser
 
             tokens = TokenHelper.getFromParenthesis(tokens);
             index += tokens.Count;
-            List<List<Token>> tokentoken = TokenHelper.Split(tokens, TokenType.COMMA);
-            foreach (List<Token> t in tokentoken)
+            List<List<Token>> TokenArgs = new List<List<Token>>();
+            
+            if (TokenHelper.Contains(tokens, TokenType.LPAREN))
+            {
+                int local_index = 0;
+                int parenthesis_count = 0;
+                List<Token> stack = new List<Token>();
+                while (local_index < tokens.Count)
+                {
+                    if (tokens[local_index].Type == TokenType.LPAREN) { stack.Add(tokens[local_index]); parenthesis_count++; local_index++; continue; }
+                    else if (tokens[local_index].Type == TokenType.RPAREN) { stack.Add(tokens[local_index]); parenthesis_count--; local_index++; continue; }
+                    else if (tokens[local_index].Type == TokenType.COMMA)
+                    {
+                        if (parenthesis_count > 0)
+                        {
+                            stack.Add(tokens[local_index]); local_index++; continue;
+                        }
+                        else
+                        {
+                            TokenArgs.Add(stack);
+                            stack.Clear();
+                            local_index++;
+                            continue;
+                        }
+                    }
+                    else
+                    {
+                        stack.Add(tokens[local_index]); local_index++; continue;
+                    }
+                }
+                if(stack.Count != 0) TokenArgs.Add(stack);
+            }
+            else
+            {
+                TokenArgs = TokenHelper.Split(tokens, TokenType.COMMA);
+            }
+
+            foreach (List<Token> t in TokenArgs)
             {
                 output.Add(ExpressionParser.ParseLR(t));
             }

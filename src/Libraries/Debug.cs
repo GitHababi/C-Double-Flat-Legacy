@@ -9,7 +9,7 @@ namespace C_Double_Flat.Libraries
 {
     class Debug_Functions : IFunction
     {
-        public Value Run(List<ExpressionNode> values, Dictionary<string, Value> Scope)
+        public Value Run(List<Value> Inputs)
         {
             foreach (string key in Interpreter.Functions.Keys)
             {
@@ -20,7 +20,7 @@ namespace C_Double_Flat.Libraries
     }
     class Debug_Vars : IFunction
     {
-        public Value Run(List<ExpressionNode> values, Dictionary<string, Value> Scope)
+        public Value Run(List<Value> Inputs)
         {
             foreach (string key in Interpreter.globalVars.Keys)
             {
@@ -29,4 +29,5 @@ namespace C_Double_Flat.Libraries
             return Value.Default;
         }
     }
+
 }

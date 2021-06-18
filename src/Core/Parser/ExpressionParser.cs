@@ -105,7 +105,6 @@ namespace C_Double_Flat.Core.Parser
                     return new ExpressionNode(TokenHelper.None);
 
                 default:
-                    Console.WriteLine(tokens[index]);
                     throw new ExpectedTokenException(tokens[index].Position, "[+, -, /, *]");
 
             }

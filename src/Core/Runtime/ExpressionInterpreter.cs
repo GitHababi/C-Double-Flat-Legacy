@@ -7,41 +7,30 @@ using System.Threading.Tasks;
 
 namespace C_Double_Flat.Core.Runtime
 {
-    public class ExpressionInterpreter
+    public partial class Interpreter
     {
-        public static Value Interpret(ExpressionNode node, ref Dictionary<string, Value> scope)
+        
+        private Value InterpretExpression(ExpressionNode node)
         {
-            ExpressionInterpreter interpreter = new ExpressionInterpreter(node);
-            interpreter.scopeVars = scope;
-            return interpreter.Private_Interpret();
-        }
-
-
-        private ExpressionNode node;
-        private Dictionary<string, Value> scopeVars = new Dictionary<string, Value>();
-
-        private ExpressionInterpreter(ExpressionNode node)
-        {
-            this.node = node;
-        }
-
-        private Value Private_Interpret()
-        {
+            if (node.GetType() == typeof(ConditionNode))
+            {
+                return Check((ConditionNode)node) ? new Value("true", ValueType.BOOL) : new Value("false", ValueType.BOOL);
+            }
             Value output = new Value();
 
             switch (node.Type)
             {
                 case TokenType.ADD:
-                    output = Add();
+                    output = Add(node);
                     break;
                 case TokenType.SUB:
-                    output = Subtract(); 
+                    output = Subtract(node); 
                     break;
                 case TokenType.MUL:
-                    output = Multiply();
+                    output = Multiply(node);
                     break;
                 case TokenType.DIV:
-                    output = Divide();
+                    output = Divide(node);
                     break;
                 case TokenType.STRING:
                     output.Data = node.Value;
@@ -56,32 +45,35 @@ namespace C_Double_Flat.Core.Runtime
                     output.Data = node.Value;
                     break;
                 case TokenType.IDENTIFIER:
-                    output = GetValue();
+                    output = GetValue(node);
                     break;
                 case TokenType.FUNC_CALL:
-                    output = CallFunction();
+                    output = CallFunction(node);
                     break;
             }
 
             return output;
         }
+ 
 
-        private Value CallFunction()
+        private Value CallFunction(ExpressionNode node)
         {
             FuncCallNode call = (FuncCallNode)node;
-
+            
 
             if (Interpreter.Functions.TryGetValue(call.Value, out IFunction function))
             {
-                return function.Run(call.Args, this.scopeVars);
+                List<Value> args = new List<Value>();
+                foreach (ExpressionNode expnode in call.Args) args.Add(InterpretExpression(expnode));
+                return function.Run(args);
             }
             return Value.Default;
         }
 
-        private Value GetValue()
+        private Value GetValue(ExpressionNode node)
         {
             Value output = new Value();
-            if(!scopeVars.TryGetValue(node.Value, out output))
+            if(!scopedVars.TryGetValue(node.Value, out output))
             {
                 if(!Interpreter.globalVars.TryGetValue(node.Value, out output))
                 {
@@ -91,10 +83,10 @@ namespace C_Double_Flat.Core.Runtime
             return output;
         }
 
-        private Value Subtract()
+        private Value Subtract(ExpressionNode node)
         {
-            Value left = ExpressionInterpreter.Interpret(node.Left, ref this.scopeVars);
-            Value right = ExpressionInterpreter.Interpret(node.Right, ref this.scopeVars);
+            Value left = InterpretExpression(node.Left);
+            Value right = InterpretExpression(node.Right);
             
             left = ValueHelper.CastValue(left, ValueType.NUMBER);
             right = ValueHelper.CastValue(right, ValueType.NUMBER);
@@ -107,10 +99,10 @@ namespace C_Double_Flat.Core.Runtime
             return output;
         }
 
-        private Value Add()
+        private Value Add(ExpressionNode node)
         {
-            Value left = ExpressionInterpreter.Interpret(node.Left, ref this.scopeVars);
-            Value right = ExpressionInterpreter.Interpret(node.Right, ref this.scopeVars);
+            Value left = InterpretExpression(node.Left);
+            Value right = InterpretExpression(node.Right);
             ValueHelper.ResolveType(out left, out right, left, right);
 
             Value output = new Value();
@@ -130,10 +122,10 @@ namespace C_Double_Flat.Core.Runtime
             return output;
         }
 
-        private Value Multiply()
+        private Value Multiply(ExpressionNode node)
         {
-            Value left = ExpressionInterpreter.Interpret(node.Left, ref this.scopeVars);
-            Value right = ExpressionInterpreter.Interpret(node.Right, ref this.scopeVars);
+            Value left = InterpretExpression(node.Left);
+            Value right = InterpretExpression(node.Right);
             
             left = ValueHelper.CastValue(left, ValueType.NUMBER);
             right = ValueHelper.CastValue(right, ValueType.NUMBER);
@@ -148,10 +140,10 @@ namespace C_Double_Flat.Core.Runtime
             return output;
         }
 
-        private Value Divide()
+        private Value Divide(ExpressionNode node)
         {
-            Value left = ExpressionInterpreter.Interpret(node.Left, ref this.scopeVars);
-            Value right = ExpressionInterpreter.Interpret(node.Right, ref this.scopeVars);
+            Value left = InterpretExpression(node.Left);
+            Value right = InterpretExpression(node.Right);
             
             left =  ValueHelper.CastValue(left, ValueType.NUMBER);
             right = ValueHelper.CastValue(right, ValueType.NUMBER);
