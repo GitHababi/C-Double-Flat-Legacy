@@ -68,9 +68,7 @@ namespace C_Double_Flat.Core.Parser
                     {
                         if (tokens[index + 1].Type == TokenType.INSRT)
                         {
-                            int amount = 0;
-                            FuncCallNode output = null;
-                            FunctionCallParser.Parse(tokens.ToArray().Skip(index).ToList(), out amount, out output);
+                            FunctionCallParser.Parse(tokens.ToArray().Skip(index).ToList(), out int amount, out FuncCallNode output);
 
                             index += amount + 1;
                             return output;

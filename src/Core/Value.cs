@@ -32,7 +32,7 @@ namespace C_Double_Flat.Core
 
     public static class  ValueHelper
     {
-        private static ValueType[,] ResolvingTable = {
+        private readonly static ValueType[,] ResolvingTable = {
             { ValueType.STRING, ValueType.STRING, ValueType.STRING },
             { ValueType.STRING, ValueType.NUMBER, ValueType.NUMBER },
             { ValueType.STRING, ValueType.NUMBER, ValueType.NUMBER }

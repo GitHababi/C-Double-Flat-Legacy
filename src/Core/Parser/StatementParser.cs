@@ -74,14 +74,12 @@ namespace C_Double_Flat.Core.Parser
                             if (Peek(2) == TokenType.LCURLY)
                             {
                                 if (isNested) throw new FunctionDeclarationException(tokens[index].Position);
-                                ParseFunctionAssignment();
+                                return ParseFunctionAssignment();
                             }
                             else return ParseAssignment();
-                            break;
                         default:
                             return ParseExpressionStatement();
                     }
-                    break;
                 case TokenType.NXTLN:
                     index++;
                     return new NONE(); // No-op 
@@ -103,7 +101,6 @@ namespace C_Double_Flat.Core.Parser
                     index++;
                     return new NONE();
             }
-            return new NONE();
         }
 
         private LOOP ParseLoop()
@@ -263,8 +260,6 @@ namespace C_Double_Flat.Core.Parser
             index += inputs.Count + 1;
             output.Arguments = args;
 
-            Console.WriteLine(output);
-            
             return output;
         }
     }

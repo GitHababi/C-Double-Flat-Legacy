@@ -9,13 +9,16 @@ namespace C_Double_Flat.Core.Runtime
 {
     public class ExpressionInterpreter
     {
-        public static Value Interpret(ExpressionNode node)
+        public static Value Interpret(ExpressionNode node, ref Dictionary<string, Value> scope)
         {
-            return new ExpressionInterpreter(node).Private_Interpret();
+            ExpressionInterpreter interpreter = new ExpressionInterpreter(node);
+            interpreter.scopeVars = scope;
+            return interpreter.Private_Interpret();
         }
 
 
         private ExpressionNode node;
+        private Dictionary<string, Value> scopeVars = new Dictionary<string, Value>();
 
         private ExpressionInterpreter(ExpressionNode node)
         {
@@ -52,14 +55,46 @@ namespace C_Double_Flat.Core.Runtime
                     output.DataType = ValueType.NUMBER;
                     output.Data = node.Value;
                     break;
+                case TokenType.IDENTIFIER:
+                    output = GetValue();
+                    break;
+                case TokenType.FUNC_CALL:
+                    output = CallFunction();
+                    break;
             }
 
             return output;
         }
+
+        private Value CallFunction()
+        {
+            FuncCallNode call = (FuncCallNode)node;
+
+
+            if (Interpreter.Functions.TryGetValue(call.Value, out IFunction function))
+            {
+                return function.Run(call.Args, this.scopeVars);
+            }
+            return Value.Default;
+        }
+
+        private Value GetValue()
+        {
+            Value output = new Value();
+            if(!scopeVars.TryGetValue(node.Value, out output))
+            {
+                if(!Interpreter.globalVars.TryGetValue(node.Value, out output))
+                {
+                    return Value.Default;
+                }
+            }
+            return output;
+        }
+
         private Value Subtract()
         {
-            Value left = ExpressionInterpreter.Interpret(node.Left);
-            Value right = ExpressionInterpreter.Interpret(node.Right);
+            Value left = ExpressionInterpreter.Interpret(node.Left, ref this.scopeVars);
+            Value right = ExpressionInterpreter.Interpret(node.Right, ref this.scopeVars);
             
             left = ValueHelper.CastValue(left, ValueType.NUMBER);
             right = ValueHelper.CastValue(right, ValueType.NUMBER);
@@ -74,8 +109,8 @@ namespace C_Double_Flat.Core.Runtime
 
         private Value Add()
         {
-            Value left = ExpressionInterpreter.Interpret(node.Left);
-            Value right = ExpressionInterpreter.Interpret(node.Right);
+            Value left = ExpressionInterpreter.Interpret(node.Left, ref this.scopeVars);
+            Value right = ExpressionInterpreter.Interpret(node.Right, ref this.scopeVars);
             ValueHelper.ResolveType(out left, out right, left, right);
 
             Value output = new Value();
@@ -97,8 +132,8 @@ namespace C_Double_Flat.Core.Runtime
 
         private Value Multiply()
         {
-            Value left = ExpressionInterpreter.Interpret(node.Left);
-            Value right = ExpressionInterpreter.Interpret(node.Right);
+            Value left = ExpressionInterpreter.Interpret(node.Left, ref this.scopeVars);
+            Value right = ExpressionInterpreter.Interpret(node.Right, ref this.scopeVars);
             
             left = ValueHelper.CastValue(left, ValueType.NUMBER);
             right = ValueHelper.CastValue(right, ValueType.NUMBER);
@@ -115,8 +150,8 @@ namespace C_Double_Flat.Core.Runtime
 
         private Value Divide()
         {
-            Value left = ExpressionInterpreter.Interpret(node.Left);
-            Value right = ExpressionInterpreter.Interpret(node.Right);
+            Value left = ExpressionInterpreter.Interpret(node.Left, ref this.scopeVars);
+            Value right = ExpressionInterpreter.Interpret(node.Right, ref this.scopeVars);
             
             left =  ValueHelper.CastValue(left, ValueType.NUMBER);
             right = ValueHelper.CastValue(right, ValueType.NUMBER);

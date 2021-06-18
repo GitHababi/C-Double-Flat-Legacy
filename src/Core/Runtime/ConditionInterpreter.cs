@@ -8,10 +8,10 @@ namespace C_Double_Flat.Core.Runtime
 {
     public class ConditionInterpreter
     {
-        public static bool Check(ConditionNode node)
+        public static bool Check(ConditionNode node, ref Dictionary<string, Value> scope)
         {
-            Value l = ExpressionInterpreter.Interpret(node.Left);
-            Value r = ExpressionInterpreter.Interpret(node.Right);
+            Value l = ExpressionInterpreter.Interpret(node.Left, ref scope);
+            Value r = ExpressionInterpreter.Interpret(node.Right, ref scope);
             switch (node.Type)
             {
                 case TokenType.EQAL:

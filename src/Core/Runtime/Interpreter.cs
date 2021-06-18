@@ -8,9 +8,9 @@ namespace C_Double_Flat.Core.Runtime
 {
     public class Interpreter
     {
-        public static Dictionary<string, Value> globalVars;
-        public static Dictionary<string, IFunction> Functions;
-        
+        public static Dictionary<string, Value> globalVars = new Dictionary<string, Value>();
+        public static Dictionary<string, IFunction> Functions = new Dictionary<string, IFunction>();
+
         public static Value Interpret(List<Statement> Statements, bool isScoped = false)
         {
             return new Interpreter(Statements, isScoped).Private_Interpret();
@@ -25,19 +25,19 @@ namespace C_Double_Flat.Core.Runtime
         /// <returns></returns>
 
 
-        public static Value Interpret(List<Statement> Statements, out Dictionary<string, Value> scope, out bool Returned, bool isScoped = false)
+        public static Value Interpret(List<Statement> Statements, ref Dictionary<string, Value> scope, out bool Returned, bool isScoped = false)
         {
             // my brain is melting
             Interpreter interpreter = new Interpreter(Statements, isScoped);
             Value output = interpreter.Private_Interpret();
-            scope = interpreter.scopedVars;
+            interpreter.scopedVars = scope;
             Returned = interpreter.Didreturned;
             return output;
-            
+
         }
 
         private List<Statement> statements = new List<Statement>();
-        private bool isScoped;
+        private readonly bool isScoped;
         private bool Didreturned = false;
         public Dictionary<string, Value> scopedVars = new Dictionary<string, Value>();
         private int index = 0;
@@ -51,17 +51,16 @@ namespace C_Double_Flat.Core.Runtime
 
         private Value Private_Interpret()
         {
-            for (int i = 0; i < statements.Count; i++) 
+            for (int i = 0; i < statements.Count; i++)
             {
                 index = i;
                 if (statements[index].GetType() == typeof(ASSIGN)) AssignVar();
                 else if (statements[index].GetType() == typeof(EXPRESSION)) RunExpression();
-                else if (statements[index].GetType() == typeof(FUNCTION)) AssignFunction();
+                else if (statements[index].GetType() == typeof(FUNCTION)) { AssignFunction(); }
                 else if (statements[index].GetType() == typeof(RETURN)) { return Return(); }
                 else if (statements[index].GetType() == typeof(IF))
                 {
-                    bool didReturn = false;
-                    Value output = IfStatement(out didReturn);
+                    Value output = IfStatement(out bool didReturn);
                     if (didReturn)
                     {
                         return output;
@@ -69,12 +68,8 @@ namespace C_Double_Flat.Core.Runtime
                 }
                 else if (statements[index].GetType() == typeof(LOOP))
                 {
-                    bool didReturn = false;
-                    Value output = LoopStatement(out didReturn);
-                    if (didReturn)
-                    {
-                        return output;
-                    }
+                    Value output = LoopStatement(out bool didReturn);
+                    if (didReturn) { return output; }
                 }
             }
             return Value.Default;
@@ -84,20 +79,31 @@ namespace C_Double_Flat.Core.Runtime
         {
             ASSIGN assigner = (ASSIGN)statements[index];
 
-            if (isScoped) scopedVars.Add(assigner.Identifier.Value, ExpressionInterpreter.Interpret(assigner.Value));
-            else globalVars.Add(assigner.Identifier.Value, ExpressionInterpreter.Interpret(assigner.Value));
+            if (isScoped)
+            {
+                Value newValue = ExpressionInterpreter.Interpret(assigner.Value, ref this.scopedVars);
+                scopedVars.Remove(assigner.Identifier.Value);
+                scopedVars.Add(assigner.Identifier.Value, newValue);
+            }
+            else
+            {
+                Value newValue = ExpressionInterpreter.Interpret(assigner.Value, ref this.scopedVars);
+                globalVars.Remove(assigner.Identifier.Value);
+                globalVars.Add(assigner.Identifier.Value, newValue);
+            }
         }
 
         private void RunExpression()
         {
             EXPRESSION expression = (EXPRESSION)statements[index];
-            ExpressionInterpreter.Interpret(expression.Value);
+            ExpressionInterpreter.Interpret(expression.Value, ref this.scopedVars);
         }
 
         private void AssignFunction()
         {
             FUNCTION func = (FUNCTION)statements[index];
-            Functions.Add(func.Identifier.Value, new User_Function(func.Arguments, func.Statements));
+            IFunction function = new User_Function(func.Arguments, func.Statements);
+            Functions.Add(func.Identifier.Value, function);
         }
 
         private Value Return()
@@ -106,7 +112,7 @@ namespace C_Double_Flat.Core.Runtime
 
             Didreturned = true;
 
-            return ExpressionInterpreter.Interpret(expression.Value);
+            return ExpressionInterpreter.Interpret(expression.Value, ref this.scopedVars);
         }
 
         private Value IfStatement(out bool didReturn)
@@ -115,27 +121,29 @@ namespace C_Double_Flat.Core.Runtime
 
 
 
-            if (ConditionInterpreter.Check(statement.Condition))
+            if (ConditionInterpreter.Check(statement.Condition, ref this.scopedVars))
             {
-                return Interpret(statement.If, out scopedVars, out didReturn, isScoped);
+                return Interpret(statement.If, ref scopedVars, out didReturn, isScoped);
             }
             else
             {
-                return Interpret(statement.Else, out scopedVars, out didReturn, isScoped);
+                return Interpret(statement.Else, ref scopedVars, out didReturn, isScoped);
             }
         }
 
         private Value LoopStatement(out bool didReturn)
         {
             LOOP statement = (LOOP)statements[index];
+
             Value output = Value.Default;
-            
             didReturn = false;
-            while(ConditionInterpreter.Check(statement.Condition))
+
+            while (ConditionInterpreter.Check(statement.Condition, ref this.scopedVars))
             {
-                Interpret(statement.Statements, out scopedVars, out didReturn, isScoped);
+                output = Interpret(statement.Statements, ref scopedVars, out didReturn, isScoped);
                 if (didReturn) break;
             }
+
             return output;
         }
     }

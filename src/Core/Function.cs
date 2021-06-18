@@ -3,12 +3,13 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using C_Double_Flat.Core.Runtime;
 
 namespace C_Double_Flat.Core
 {
     public interface IFunction
     {
-        Value Run(List<ExpressionNode> Inputs);
+        Value Run(List<ExpressionNode> Inputs, Dictionary<string, Value> Scope);
     }
 
     public class User_Function : IFunction
@@ -23,16 +24,18 @@ namespace C_Double_Flat.Core
         private List<Token> args;
 
 
-        public Value Run(List<ExpressionNode> Inputs)
+        public Value Run(List<ExpressionNode> Inputs, Dictionary<string, Value> Scope)
         {
-            List < ASSIGN > arguments = new List<ASSIGN>();
+            List <Statement> arguments = new List<Statement>();
             for (int i = 0; i < args.Count; i++)
             {
                 ASSIGN a = new ASSIGN();
                 a.Identifier = args[i];
                 a.Value = Inputs[i];
+                arguments.Add(a);
             }
-            return null; /* Whenever statement interpreting is indroduced, this will need to edit. */
+            arguments.AddRange(statements);
+            return Interpreter.Interpret(arguments, true);
         }
     }
 }

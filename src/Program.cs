@@ -15,6 +15,12 @@ namespace C_Double_Flat
     {
         public static void Main(string[] args)
         {
+
+            Interpreter.Functions.Add("disp_echo", new Libraries.Display_Echo());
+            Interpreter.Functions.Add("disp_prompt", new Libraries.Display_Prompt());
+            Interpreter.Functions.Add("disp_clear", new Libraries.Display_Clear());
+            Interpreter.Functions.Add("dbug_funcs", new Libraries.Debug_Functions());
+            Interpreter.Functions.Add("dbug_vars", new Libraries.Debug_Vars());
             if (args.Length > 0)
             {
                 List<Token> Tokens = new List<Token>();
@@ -25,9 +31,7 @@ namespace C_Double_Flat
 
                         Tokens = Lexer.Tokenize(File.ReadAllText(args[0]));
 
-                        Console.WriteLine("\nParser Result:");
-
-                        ExpressionInterpreter.Interpret(ExpressionParser.ParseLR(Tokens));
+                        Console.WriteLine(Interpreter.Interpret(StatementParser.Parse(Tokens, false)));
 
                     }
                     catch (Exception e)
@@ -37,9 +41,7 @@ namespace C_Double_Flat
                 }
 
             }
-
-
-
+            
             while ("" == "")
             {
                 Console.ForegroundColor = ConsoleColor.Yellow;
@@ -58,7 +60,7 @@ namespace C_Double_Flat
                         Tokens = Lexer.Tokenize(input);
                     }
 
-                    Console.WriteLine("\nParser Result:");
+                    Console.WriteLine("\nResult:");
 
                     Console.WriteLine(Interpreter.Interpret(StatementParser.Parse(Tokens, false)));
                 }
