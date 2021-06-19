@@ -87,8 +87,9 @@ namespace C_Double_Flat.Core.Parser
                     return ExpressionParser.ParseLR(n);
                 case TokenType.SUB:
                     index++;
-                    output = ParseTerm();
-                    output.Value = "-" + output.Value;
+                    output.Left = ParseTerm();
+                    output.Type = TokenType.MUL;
+                    output.Right = new ExpressionNode(new Token(TokenType.NUMBER,"-1",tokens[index].Position));
                     return output;
                 default:
                     throw new ExpectedTokenException(tokens[index].Position, "[Number, String, Boolean, Expression]");

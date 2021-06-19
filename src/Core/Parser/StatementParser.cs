@@ -99,6 +99,8 @@ namespace C_Double_Flat.Core.Parser
                     return ParseLoop();
                 case TokenType.RUN:
                     return ParseRun();
+                case TokenType.SUB:
+                    return ParseExpressionStatement();
                 default:
                     index++;
                     return new NONE();

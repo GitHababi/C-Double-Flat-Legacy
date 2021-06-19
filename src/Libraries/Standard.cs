@@ -20,9 +20,9 @@ namespace C_Double_Flat.Libraries
             {"disp_echo", new Libraries.Display_Echo()},
             {"disp_prompt", new Libraries.Display_Prompt()},
             {"disp_clear", new Libraries.Display_Clear()},
-            /*{"dbug_vars", new Libraries.Debug_Vars()}, 
-            Uncomment these two lines to enable debug functions.
-            {"dbug_parse", new Libraries.Debug_Parse()},*/
+            //{"dbug_vars", new Libraries.Debug_Vars()}, 
+             // Uncomment these two lines to enable debug functions.
+            //{"dbug_parse", new Libraries.Debug_Parse()},
             {"math_abs", new Libraries.Math_Abs()},
             {"math_round", new Libraries.Math_Round()},
             {"math_rand", new Libraries.Math_Rand()},
@@ -42,7 +42,7 @@ namespace C_Double_Flat.Libraries
         }
         public Value Run(List<Value> values)
         {
-            if (values.Count < 2) throw new ArgumentCountException(2);
+            if (values.Count < 2) throw new ArgumentCountException(2, "math_rand");
 
             int lower = (int)Math.Round(Convert.ToDouble(ValueHelper.CastValue(values[0], Core.ValueType.NUMBER).Data));
             int upper = (int)Math.Round(Convert.ToDouble(ValueHelper.CastValue(values[1], Core.ValueType.NUMBER).Data));
@@ -59,7 +59,7 @@ namespace C_Double_Flat.Libraries
         }
         public Value Run(List<Value> values)
         {
-            if (values.Count < 1) throw new ArgumentCountException(1);
+            if (values.Count < 1) throw new ArgumentCountException(1, "math_round");
 
             return new Value(Math.Round(Convert.ToDouble(ValueHelper.CastValue(values[0], Core.ValueType.NUMBER).Data)).ToString(), Core.ValueType.NUMBER);
         }
@@ -72,7 +72,7 @@ namespace C_Double_Flat.Libraries
         }
         public Value Run(List<Value> values)
         {
-            if (values.Count < 2) throw new ArgumentCountException(2);
+            if (values.Count < 2) throw new ArgumentCountException(2, "math_mod");
             double left = Convert.ToDouble(ValueHelper.CastValue(values[0], Core.ValueType.NUMBER).Data);
             double right = Convert.ToDouble(ValueHelper.CastValue(values[1], Core.ValueType.NUMBER).Data);
             double returnval = left % right;
@@ -87,7 +87,7 @@ namespace C_Double_Flat.Libraries
         }
         public Value Run(List<Value> values)
         {
-            if (values.Count < 2) throw new ArgumentCountException(2);
+            if (values.Count < 2) throw new ArgumentCountException(2, "math_pow");
             double left = Convert.ToDouble(ValueHelper.CastValue(values[0], Core.ValueType.NUMBER).Data);
             double right = Convert.ToDouble(ValueHelper.CastValue(values[1], Core.ValueType.NUMBER).Data);
             return new Value(Math.Pow(left, right).ToString(), Core.ValueType.NUMBER);
@@ -101,7 +101,7 @@ namespace C_Double_Flat.Libraries
         }
         public Value Run(List<Value> values)
         {
-            if (values.Count < 1) throw new ArgumentCountException(1);
+            if (values.Count < 1) throw new ArgumentCountException(1, "math_sqrt");
             return new Value(Math.Sqrt(Convert.ToDouble(ValueHelper.CastValue(values[0], Core.ValueType.NUMBER).Data)).ToString(), Core.ValueType.NUMBER);
         }
     }
@@ -113,7 +113,7 @@ namespace C_Double_Flat.Libraries
         }
         public Value Run(List<Value> values)
         {
-            if (values.Count < 1) throw new ArgumentCountException(1);
+            if (values.Count < 1) throw new ArgumentCountException(1, "math_abs");
             return new Value(Math.Abs(Convert.ToDouble(ValueHelper.CastValue(values[0], Core.ValueType.NUMBER).Data)).ToString(), Core.ValueType.NUMBER);
 
         }
@@ -129,7 +129,7 @@ namespace C_Double_Flat.Libraries
         public Value Run(List<Value> values)
         {
             string output = "";
-            if (values.Count < 1) throw new ArgumentCountException(1);
+            if (values.Count < 1) throw new ArgumentCountException(1, "file_read");
             try
             {
                 output = File.ReadAllText(values[0].Data);
@@ -146,7 +146,7 @@ namespace C_Double_Flat.Libraries
         }
         public Value Run(List<Value> values)
         {
-            if (values.Count < 2) throw new ArgumentCountException(2);
+            if (values.Count < 2) throw new ArgumentCountException(2, "file_save");
             try
             {
                 File.WriteAllText(values[0].Data, values[1].Data);
@@ -203,7 +203,7 @@ namespace C_Double_Flat.Libraries
 
         Value IFunction.Run(List<Value> Inputs)
         {
-            if (Inputs.Count < 1) throw new ArgumentCountException(1);
+            if (Inputs.Count < 1) throw new ArgumentCountException(1, "dbug_parse");
             var a = StatementParser.Parse(Lexer.Tokenize(Inputs[0].Data), false);
             string output = "";
             foreach (var n in a) output += n;

@@ -48,7 +48,7 @@ namespace C_Double_Flat
             
             if (!runWithArgs)
             {
-                Console.WriteLine("C Double Flat - REPL v1.0.0");
+                Console.WriteLine("C Double Flat - REPL v1.1");
                 Console.WriteLine("Created by Heerod Sahraei");
                 Console.WriteLine("Copyright (C) Hababisoft Corporation. All rights reserved.");
                 Console.WriteLine("Type: 'help<-();' for help.\n");

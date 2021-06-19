@@ -66,7 +66,7 @@ namespace C_Double_Flat.Errors
     }
     public class ArgumentCountException : Exception
     {
-        public ArgumentCountException(int number) : base(String.Format("Called function requires at least {0} arguments.", number)) { }
+        public ArgumentCountException(int number, string name) : base(String.Format("Function '{1}' requires at least {0} arguments.", number, name)) { }
     }
     public class InvalidExpressionException : Exception
     {
