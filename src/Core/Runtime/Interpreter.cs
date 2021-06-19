@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.IO;
+using C_Double_Flat.Core.Parser;
 
 namespace C_Double_Flat.Core.Runtime
 {
@@ -11,9 +13,9 @@ namespace C_Double_Flat.Core.Runtime
         public static Dictionary<string, Value> globalVars = new Dictionary<string, Value>();
         public static Dictionary<string, IFunction> Functions = new Dictionary<string, IFunction>();
 
-        public static Value Interpret(List<Statement> Statements, bool isScoped = false)
+        public static Value Interpret(List<Statement> Statements, string dir, bool isScoped = false)
         {
-            return new Interpreter(Statements, isScoped).Private_Interpret();
+            return new Interpreter(Statements, isScoped,dir).Private_Interpret();
         }
 
         /// <summary>
@@ -25,10 +27,10 @@ namespace C_Double_Flat.Core.Runtime
         /// <returns></returns>
 
 
-        public static Value Interpret(List<Statement> Statements, ref Dictionary<string, Value> scope, out bool Returned, bool isScoped = false)
+        public static Value Interpret(List<Statement> Statements, ref Dictionary<string, Value> scope, string dir, out bool Returned, bool isScoped = false)
         {
             // my brain is melting
-            Interpreter interpreter = new Interpreter(Statements, isScoped);
+            Interpreter interpreter = new Interpreter(Statements, isScoped, dir);
             interpreter.scopedVars = scope;
             Value output = interpreter.Private_Interpret();
             Returned = interpreter.Didreturned;
@@ -42,12 +44,13 @@ namespace C_Double_Flat.Core.Runtime
         private bool Didreturned = false;
         public Dictionary<string, Value> scopedVars = new Dictionary<string, Value>();
         private int index = 0;
+        public string currentDir;
 
-
-        private Interpreter(List<Statement> statements, bool isScoped)
+        private Interpreter(List<Statement> statements, bool isScoped, string currentDir)
         {
             this.statements = statements;
             this.isScoped = isScoped;
+            this.currentDir = currentDir;
         }
 
         private Value Private_Interpret()
@@ -72,8 +75,25 @@ namespace C_Double_Flat.Core.Runtime
                     Value output = LoopStatement(out bool didReturn);
                     if (didReturn) { return output; }
                 }
+                else if (statements[index].GetType() == typeof(RUN)) RunRun();
             }
             return Value.Default;
+        }
+
+        private void RunRun()
+        {
+            RUN runningstatement = (RUN)statements[index];
+            string incomplete_path = ValueHelper.CastValue(InterpretExpression(runningstatement.Path), ValueType.STRING).Data;
+
+            string fullstring = "";
+            string path = "";
+            try
+            {
+                path = Path.Combine(currentDir, incomplete_path);
+                fullstring = File.ReadAllText(path);
+            } catch { }
+            Interpreter.Interpret(StatementParser.Parse(Lexer.Tokenize(fullstring), false), path);
+            
         }
 
         private void AssignVar()
@@ -83,8 +103,17 @@ namespace C_Double_Flat.Core.Runtime
             if (isScoped)
             {
                 Value newValue = InterpretExpression(assigner.Value);
-                scopedVars.Remove(assigner.Identifier.Value);
-                scopedVars.Add(assigner.Identifier.Value, newValue);
+                if (!globalVars.TryGetValue(assigner.Identifier.Value, out Value temp)) // if the global doesnt exist, do it locally
+                {
+                    scopedVars.Remove(assigner.Identifier.Value);
+                    scopedVars.Add(assigner.Identifier.Value, newValue);
+                }
+                else
+                {
+                    globalVars.Remove(assigner.Identifier.Value);
+                    globalVars.Add(assigner.Identifier.Value, newValue);
+                }
+
             }
             else
             {
@@ -125,11 +154,11 @@ namespace C_Double_Flat.Core.Runtime
 
             if (Check(statement.Condition))
             {
-                return Interpret(statement.If, ref scopedVars, out didReturn, isScoped);
+                return Interpret(statement.If, ref scopedVars, currentDir, out didReturn, isScoped);
             }
             else
             {
-                return Interpret(statement.Else, ref scopedVars, out didReturn, isScoped);
+                return Interpret(statement.Else, ref scopedVars, currentDir, out didReturn, isScoped);
             }
         }
 
@@ -142,7 +171,7 @@ namespace C_Double_Flat.Core.Runtime
 
             while (Check(statement.Condition))
             {
-                output = Interpret(statement.Statements, ref scopedVars, out didReturn, isScoped);
+                output = Interpret(statement.Statements, ref scopedVars, currentDir, out didReturn, isScoped);
                 if (didReturn) break;
             }
 

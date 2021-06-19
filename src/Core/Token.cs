@@ -239,6 +239,7 @@ namespace C_Double_Flat.Core
         ELSE,
         LOOP,
         RETURN,
+        RUN,
 
         // Special Tokens
 

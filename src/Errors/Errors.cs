@@ -62,10 +62,15 @@ namespace C_Double_Flat.Errors
     public class InvalidElseException : Exception
     {
         public InvalidElseException() { }
-        public InvalidElseException(Position pos) : base(String.Format("Else cannot start a statement: {0} Column: {1}", pos._line, pos._col)) { }
+        public InvalidElseException(Position pos) : base(String.Format("Else cannot start a statement at Line: {0} Column: {1}", pos._line, pos._col)) { }
     }
     public class ArgumentCountException : Exception
     {
         public ArgumentCountException(int number) : base(String.Format("Called function requires at least {0} arguments.", number)) { }
+    }
+    public class InvalidExpressionException : Exception
+    {
+        public InvalidExpressionException() { }
+        public InvalidExpressionException(Position pos) : base(String.Format("Expected expression, not condition at Line: {0} Column: {1}", pos._line, pos._col)) { }
     }
 }

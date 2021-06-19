@@ -63,26 +63,27 @@ namespace C_Double_Flat.Core.Parser
                 List<Token> stack = new List<Token>();
                 while (local_index < tokens.Count)
                 {
-                    if (tokens[local_index].Type == TokenType.LPAREN) { stack.Add(tokens[local_index]); parenthesis_count++; local_index++; continue; }
-                    else if (tokens[local_index].Type == TokenType.RPAREN) { stack.Add(tokens[local_index]); parenthesis_count--; local_index++; continue; }
+                    if (tokens[local_index].Type == TokenType.LPAREN) { stack.Add(tokens[local_index]); parenthesis_count++; }
+                    else if (tokens[local_index].Type == TokenType.RPAREN) { stack.Add(tokens[local_index]); parenthesis_count--; }
                     else if (tokens[local_index].Type == TokenType.COMMA)
                     {
                         if (parenthesis_count > 0)
                         {
-                            stack.Add(tokens[local_index]); local_index++; continue;
+                            stack.Add(tokens[local_index]);
                         }
                         else
                         {
                             TokenArgs.Add(stack);
-                            stack.Clear();
+                            stack = new List<Token>();
                             local_index++;
                             continue;
                         }
                     }
                     else
                     {
-                        stack.Add(tokens[local_index]); local_index++; continue;
+                        stack.Add(tokens[local_index]);
                     }
+                    local_index++;
                 }
                 if(stack.Count != 0) TokenArgs.Add(stack);
             }

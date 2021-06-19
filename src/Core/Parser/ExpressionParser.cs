@@ -85,6 +85,11 @@ namespace C_Double_Flat.Core.Parser
                     List<Token> n = TokenHelper.getFromParenthesis(tokens, index);
                     index += n.Count + 1;
                     return ExpressionParser.ParseLR(n);
+                case TokenType.SUB:
+                    index++;
+                    output = ParseTerm();
+                    output.Value = "-" + output.Value;
+                    return output;
                 default:
                     throw new ExpectedTokenException(tokens[index].Position, "[Number, String, Boolean, Expression]");
             }

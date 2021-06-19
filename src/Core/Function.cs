@@ -9,11 +9,16 @@ namespace C_Double_Flat.Core
 {
     public interface IFunction
     {
+        string Description();
         Value Run(List<Value> Inputs);
     }
 
     public class User_Function : IFunction
     {
+        public string Description()
+        {
+            return "A user defined function";
+        }
         public User_Function(List<Token> Args, List<Statement> Statements)
         {
             this.args = Args;
@@ -35,7 +40,7 @@ namespace C_Double_Flat.Core
                 arguments.Add(a);
             }
             arguments.AddRange(statements);
-            return Interpreter.Interpret(arguments, true);
+            return Interpreter.Interpret(arguments, Program.ProgramLocation, true);
         }
     }
 }

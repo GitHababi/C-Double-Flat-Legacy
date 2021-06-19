@@ -49,6 +49,10 @@ namespace C_Double_Flat.Core
             {
                 switch (_currentChar)
                 {
+                    case '#':
+                        commentCompleter();
+                        Advance();
+                        break;
                     case '+':
                         tokenList.Add(new Token(TokenType.ADD, _position));
                         Advance();
@@ -85,7 +89,7 @@ namespace C_Double_Flat.Core
 
                         // Because the < character can be followed by multiple characters giving tokens this is what we have to do.
 
-                        if (_position._index + 1 != _script.Length)
+                        if (_position._index + 1 < _script.Length)
                         {
                             switch (_script[_position._index + 1])
                             {
@@ -110,7 +114,7 @@ namespace C_Double_Flat.Core
                         }
                         break;
                     case '>':
-                        if (_position._index + 1 != _script.Length)
+                        if (_position._index + 1 < _script.Length)
                         {
                             switch (_script[_position._index + 1])
                             {
@@ -132,7 +136,7 @@ namespace C_Double_Flat.Core
 
                         break;
                     case '!':
-                        if (_position._index + 1 != _script.Length)
+                        if (_position._index + 1 < _script.Length)
                         {
                             if (_script[_position._index + 1] == '=') { tokenList.Add(new Token(TokenType.NOT_EQAL, _position)); Advance(2); }
                             else throw new TokenException(_position, _currentChar);
@@ -186,6 +190,13 @@ namespace C_Double_Flat.Core
             }
             return tokenList;
         }
+        private void commentCompleter()
+        {
+            while (_currentChar != default && _currentChar != '\n')
+            {
+                Advance();
+            }
+        }
         private Token stringLiteralFinder()
         {
             Advance();
@@ -216,6 +227,8 @@ namespace C_Double_Flat.Core
                     return new Token(TokenType.LOOP, _position);
                 case "return":
                     return new Token(TokenType.RETURN, _position);
+                case "run":
+                    return new Token(TokenType.RUN, _position);
                 case "true":
                     return new Token(TokenType.BOOL, "true", _position);
                 case "false":

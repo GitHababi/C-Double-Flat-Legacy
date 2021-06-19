@@ -12,6 +12,16 @@ namespace C_Double_Flat.Core
         public object ReturnSelf() { return this; }
     }
 
+    public class RUN : Statement
+    {
+        public new StatementType Type = StatementType.RUN;
+        public ExpressionNode Path;
+        public override string ToString()
+        {
+            return "- RUN SCRIPT AT: " + Path;
+        }
+    }
+
     public class NONE : Statement
     {
         public new StatementType Type = StatementType.NONE;
@@ -130,6 +140,7 @@ namespace C_Double_Flat.Core
         IF,
         LOOP,
         RETURN,
+        RUN,
         NONE
     }
 }

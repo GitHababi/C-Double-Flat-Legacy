@@ -97,10 +97,30 @@ namespace C_Double_Flat.Core.Parser
                     throw new InvalidElseException(currentToken.Position);
                 case TokenType.LOOP:
                     return ParseLoop();
+                case TokenType.RUN:
+                    return ParseRun();
                 default:
                     index++;
                     return new NONE();
             }
+        }
+
+        private RUN ParseRun()
+        {
+            RUN output = new RUN();
+
+            index += 1; //moving one over because we just skipped past a return token.
+
+            int endpoint = NextStatementEnding();
+
+            if (TokenHelper.Contains(tokens.Skip(index).Take(endpoint - index).ToList(), TokenHelper.conditions))
+                throw new InvalidExpressionException(tokens[index].Position);
+            else
+                output.Path = ExpressionParser.ParseLR(tokens.Skip(index).Take(endpoint - index).ToList());
+
+            index += endpoint - index;
+
+            return output;
         }
 
         private LOOP ParseLoop()
