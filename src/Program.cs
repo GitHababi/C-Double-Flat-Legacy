@@ -23,16 +23,14 @@ namespace C_Double_Flat
 
             if (args.Length > 0)
             {
-                List<Token> Tokens = new List<Token>();
+                
                 if (File.Exists(args[0]))
                 {
                     try
                     {
 
-                        Tokens = Lexer.Tokenize(File.ReadAllText(args[0]));
-
                         runWithArgs = true;
-                        string output = Interpreter.Interpret(StatementParser.Parse(Tokens, false), Path.GetDirectoryName(args[0])).Data + " <<<";
+                        string output = Interpreter.Interpret(StatementParser.Parse(Lexer.Tokenize(File.ReadAllText(args[0])), false), Path.GetDirectoryName(args[0])).Data + " <<<";
                         Console.ForegroundColor = ConsoleColor.DarkGray;
                         Console.WriteLine(output);
                         Console.ResetColor();
@@ -48,7 +46,7 @@ namespace C_Double_Flat
             
             if (!runWithArgs)
             {
-                Console.WriteLine("C Double Flat - REPL v1.1");
+                Console.WriteLine("C Double Flat - REPL v1.2");
                 Console.WriteLine("Created by Heerod Sahraei");
                 Console.WriteLine("Copyright (C) Hababisoft Corporation. All rights reserved.");
                 Console.WriteLine("Type: 'help<-();' for help.\n");

@@ -29,9 +29,10 @@ namespace C_Double_Flat.Core.Runtime
 
         public static Value Interpret(List<Statement> Statements, ref Dictionary<string, Value> scope, string dir, out bool Returned, bool isScoped = false)
         {
-            // my brain is melting
-            Interpreter interpreter = new Interpreter(Statements, isScoped, dir);
-            interpreter.scopedVars = scope;
+            Interpreter interpreter = new Interpreter(Statements, isScoped, dir)
+            {
+                scopedVars = scope
+            };
             Value output = interpreter.Private_Interpret();
             Returned = interpreter.Didreturned;
             scope = interpreter.scopedVars;
@@ -39,7 +40,7 @@ namespace C_Double_Flat.Core.Runtime
 
         }
 
-        private List<Statement> statements = new List<Statement>();
+        private readonly List<Statement> statements = new List<Statement>();
         private readonly bool isScoped;
         private bool Didreturned = false;
         public Dictionary<string, Value> scopedVars = new Dictionary<string, Value>();
@@ -103,7 +104,7 @@ namespace C_Double_Flat.Core.Runtime
             if (isScoped)
             {
                 Value newValue = InterpretExpression(assigner.Value);
-                if (!globalVars.TryGetValue(assigner.Identifier.Value, out Value temp)) // if the global doesnt exist, do it locally
+                if (!globalVars.TryGetValue(assigner.Identifier.Value, out Value _)) // if the global doesnt exist, do it locally
                 {
                     scopedVars.Remove(assigner.Identifier.Value);
                     scopedVars.Add(assigner.Identifier.Value, newValue);
@@ -119,6 +120,7 @@ namespace C_Double_Flat.Core.Runtime
             {
                 Value newValue = InterpretExpression(assigner.Value);
                 globalVars.Remove(assigner.Identifier.Value);
+                if (Functions.ContainsKey(assigner.Identifier.Value)) Functions.Remove(assigner.Identifier.Value);
                 globalVars.Add(assigner.Identifier.Value, newValue);
             }
         }
@@ -134,6 +136,7 @@ namespace C_Double_Flat.Core.Runtime
             FUNCTION func = (FUNCTION)statements[index];
             IFunction function = new User_Function(func.Arguments, func.Statements);
             Functions.Remove(func.Identifier.Value);
+            if (globalVars.TryGetValue(func.Identifier.Value, out Value _)) globalVars.Remove(func.Identifier.Value); 
             Functions.Add(func.Identifier.Value, function);
         }
 

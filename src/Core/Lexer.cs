@@ -9,7 +9,7 @@ namespace C_Double_Flat.Core
 {
     public class Lexer
     {
-        private char[] _script; //The text file as a char array
+        private readonly char[] _script; //The text file as a char array
         private Position _position; //Read head position
         private char _currentChar;
 
@@ -27,7 +27,7 @@ namespace C_Double_Flat.Core
         }
         public List<Token> GetTokens()
         {
-            return makeTokens();
+            return MakeTokens();
         }
 
         private void Advance()
@@ -41,7 +41,7 @@ namespace C_Double_Flat.Core
             _currentChar = (_position._index < _script.Length) ? _script[_position._index] : default;
         }
 
-        private List<Token> makeTokens()
+        private List<Token> MakeTokens()
         {
             List<Token> tokenList = new List<Token>(); // The final list of tokens to be passed into Parser / Interpreter
 
@@ -50,7 +50,7 @@ namespace C_Double_Flat.Core
                 switch (_currentChar)
                 {
                     case '#':
-                        commentCompleter();
+                        CommentCompleter();
                         Advance();
                         break;
                     case '+':
@@ -163,15 +163,15 @@ namespace C_Double_Flat.Core
                         Advance();
                         break;
                     case '"':
-                        tokenList.Add(stringLiteralFinder());
+                        tokenList.Add(StringLiteralFinder());
                         break;
                     default:
-                        if (char.IsDigit(_currentChar)) tokenList.Add(makeNumberTokens());
+                        if (char.IsDigit(_currentChar)) tokenList.Add(MakeNumberTokens());
                         else
                         {
                             if (char.IsLetter(_currentChar) || _currentChar == '_' || _currentChar == '-')
                             {
-                                tokenList.Add(keywordFinder());
+                                tokenList.Add(KeywordFinder());
                             }
                             else
                             {
@@ -190,29 +190,52 @@ namespace C_Double_Flat.Core
             }
             return tokenList;
         }
-        private void commentCompleter()
+        private void CommentCompleter()
         {
             while (_currentChar != default && _currentChar != '\n')
             {
                 Advance();
             }
         }
-        private Token stringLiteralFinder()
+        private Token StringLiteralFinder()
         {
             Advance();
             string accumulator = "";
             bool foundEnd = false;
             for (int x = _position._index; x < _script.Length; x++)
             {
-                if (_currentChar == '"') { Advance(); foundEnd = true; break; }
-                accumulator += _currentChar;
-                Advance();
+                if (_currentChar == '^')
+                {
+                    Advance();
+                    switch(_currentChar)
+                    {
+                        case 'n':
+                            accumulator += '\n';
+                            break;
+                        case 't':
+                            accumulator += '\t';
+                            break;
+                        case '"':
+                            accumulator += '"';
+                            break;
+                        default:
+                            accumulator += (string)"^" + _currentChar.ToString();
+                            break;
+                    }
+                    Advance();
+                }
+                else
+                {
+                    if (_currentChar == '"') { Advance(); foundEnd = true; break; }
+                    accumulator += _currentChar;
+                    Advance();
+                }
             }
             if (foundEnd) return new Token(TokenType.STRING, accumulator, _position);
             else throw new TerminatingStringException(_position);
         }
 
-        private Token keywordFinder()
+        private Token KeywordFinder()
         {
             string fromCurrent = new String(_script, _position._index, _script.Length - _position._index);
             fromCurrent = Regex.Split(fromCurrent, @"[\s\W]")[0];
@@ -238,7 +261,7 @@ namespace C_Double_Flat.Core
             }
         }
 
-        private Token makeNumberTokens()
+        private Token MakeNumberTokens()
         {
             string value = "";
             int dotCount = 0;

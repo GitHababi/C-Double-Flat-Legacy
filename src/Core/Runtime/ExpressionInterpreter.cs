@@ -72,11 +72,14 @@ namespace C_Double_Flat.Core.Runtime
 
         private Value GetValue(ExpressionNode node)
         {
-            Value output = new Value();
-            if(!scopedVars.TryGetValue(node.Value, out output))
+            if(!scopedVars.TryGetValue(node.Value, out Value output)) // First try to find a local definition
             {
-                if(!Interpreter.globalVars.TryGetValue(node.Value, out output))
+                if(!Interpreter.globalVars.TryGetValue(node.Value, out output)) // Then a global definition
                 {
+                    if (Functions.TryGetValue(node.Value,out IFunction function)) // then call a function with no args
+                    {
+                        return function.Run(new List<Value>()); 
+                    }
                     return Value.Default;
                 }
             }
@@ -91,19 +94,18 @@ namespace C_Double_Flat.Core.Runtime
             left = ValueHelper.CastValue(left, ValueType.NUMBER);
             right = ValueHelper.CastValue(right, ValueType.NUMBER);
 
-            Value output = new Value();
-
-            output.Data = (Convert.ToDouble(left.Data) - Convert.ToDouble(right.Data)).ToString();
-            output.DataType = ValueType.NUMBER;
+            Value output = new Value
+            {
+                Data = (Convert.ToDouble(left.Data) - Convert.ToDouble(right.Data)).ToString(),
+                DataType = ValueType.NUMBER
+            };
 
             return output;
         }
 
         private Value Add(ExpressionNode node)
         {
-            Value left = InterpretExpression(node.Left);
-            Value right = InterpretExpression(node.Right);
-            ValueHelper.ResolveType(out left, out right, left, right);
+            ValueHelper.ResolveType(out Value left, out Value right, InterpretExpression(node.Left), InterpretExpression(node.Right));
 
             Value output = new Value();
 
@@ -131,10 +133,11 @@ namespace C_Double_Flat.Core.Runtime
             right = ValueHelper.CastValue(right, ValueType.NUMBER);
 
 
-            Value output = new Value();
-
-            output.Data = (Convert.ToDouble(left.Data) * Convert.ToDouble(right.Data)).ToString();
-            output.DataType = ValueType.NUMBER;
+            Value output = new Value
+            {
+                Data = (Convert.ToDouble(left.Data) * Convert.ToDouble(right.Data)).ToString(),
+                DataType = ValueType.NUMBER
+            };
 
 
             return output;
@@ -153,10 +156,11 @@ namespace C_Double_Flat.Core.Runtime
                 throw new DivideByZeroException();
             }
 
-            Value output = new Value();
-
-            output.Data = (Convert.ToDouble(left.Data) / Convert.ToDouble(right.Data)).ToString();
-            output.DataType = ValueType.NUMBER;
+            Value output = new Value
+            {
+                Data = (Convert.ToDouble(left.Data) / Convert.ToDouble(right.Data)).ToString(),
+                DataType = ValueType.NUMBER
+            };
 
             return output;
         }

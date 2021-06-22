@@ -31,8 +31,27 @@ namespace C_Double_Flat.Libraries
             {"math_sqrt", new Libraries.Math_Sqrt()},
             {"file_read", new Libraries.File_Read()},
             {"file_save", new Libraries.File_Save()},
+            {"file_copy", new Libraries.File_Copy()},
+            {"file_delete", new Libraries.File_Delete()},
+            { "string_has", new Libraries.String_Contains()},
+            { "string_lower", new Libraries.String_Lower()},
+            { "string_upper", new Libraries.String_Upper()},
+            { "string_length", new Libraries.String_Length()},
         };
     }
+
+    class Template : IFunction
+    {
+        string IFunction.Description()
+        {
+            return "";
+        }
+        Value IFunction.Run(List<Value> Inputs)
+        {
+            return Value.Default;
+        }
+    }
+
     #region Math
     class Math_Rand : IFunction
     {
@@ -152,6 +171,43 @@ namespace C_Double_Flat.Libraries
                 File.WriteAllText(values[0].Data, values[1].Data);
             }
             catch { }
+            return Value.Default;
+        }
+    }
+    class File_Copy : IFunction
+    {
+        string IFunction.Description()
+        {
+            return "Copies the file in the first argument into the file path of the second argument";
+        }
+        Value IFunction.Run(List<Value> Inputs)
+        {
+            if (Inputs.Count < 2) throw new ArgumentCountException(2, "file_copy");
+            try
+            {
+                File.Copy(Inputs[0].Data, Inputs[1].Data);
+            }
+            catch { }
+            return Value.Default;
+        }
+    }
+    class File_Delete : IFunction
+    {
+        string IFunction.Description()
+        {
+            return "Deletes the file from the path given in the first argument";
+        }
+        Value IFunction.Run(List<Value> Inputs)
+        {
+            if (Inputs.Count < 1) throw new ArgumentCountException(1, "file_delete");
+            if (Inputs[0].Data == null) throw new ArgumentCountException(1, "file_delete");
+
+            try
+            {
+                File.Delete(Inputs[0].Data);
+            }
+            catch { }
+
             return Value.Default;
         }
     }
@@ -285,6 +341,63 @@ namespace C_Double_Flat.Libraries
         {
             Environment.Exit(0);
             return Value.Default; // Lol, returning in a function that calls exit.
+        }
+    }
+    #endregion
+    #region String
+    class String_Contains : IFunction
+    {
+        string IFunction.Description()
+        {
+            return "Returns true if the first argument contains the second argument as a string, otherwise returns false";
+        }
+
+        Value IFunction.Run(List<Value> Inputs)
+        {
+            if (Inputs.Count < 2) throw new ArgumentCountException(2, "string_has");
+            bool output = Inputs[0].Data.Contains(Inputs[1].Data);
+            return new Value(output.ToString(), Core.ValueType.BOOL);
+        }
+    }
+    class String_Upper : IFunction
+    {
+        string IFunction.Description()
+        {
+            return "Takes first argument, then returns the string value in uppercase";
+        }
+
+        Value IFunction.Run(List<Value> Inputs)
+        {
+            if (Inputs.Count < 1) throw new ArgumentCountException(1, "string_upper");
+            if (Inputs[0].Data == null) throw new ArgumentCountException(1, "string_upper");
+            return new Value(Inputs[0].Data.ToUpper(), Core.ValueType.STRING);
+        }
+    }
+    class String_Lower : IFunction
+    {
+        string IFunction.Description()
+        {
+            return "Takes first argument, then returns the string value in uppercase";
+        }
+
+        Value IFunction.Run(List<Value> Inputs)
+        {
+            if (Inputs.Count < 1) throw new ArgumentCountException(1, "string_lower");
+            if (Inputs[0].Data == null) throw new ArgumentCountException(1, "string_lower");
+            return new Value(Inputs[0].Data.ToLower(), Core.ValueType.STRING);
+        }
+    }
+    class String_Length : IFunction
+    {
+        string IFunction.Description()
+        {
+            return "Returns the string length of the first argument";
+        }
+        Value IFunction.Run(List<Value> Inputs)
+        {
+            if (Inputs.Count < 1) throw new ArgumentCountException(1, "string_length");
+            if (Inputs[0].Data == null) throw new ArgumentCountException(1, "string_length");
+            return new Value(Inputs[0].Data.Length.ToString(), Core.ValueType.NUMBER);
         }
     }
     #endregion
