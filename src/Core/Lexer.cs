@@ -43,7 +43,7 @@ namespace C_Double_Flat.Core
 
         private List<Token> MakeTokens()
         {
-            List<Token> tokenList = new List<Token>(); // The final list of tokens to be passed into Parser / Interpreter
+            List<Token> tokenList = new(); // The final list of tokens to be passed into Parser / Interpreter
 
             while (_currentChar != default)
             {
@@ -207,21 +207,13 @@ namespace C_Double_Flat.Core
                 if (_currentChar == '^')
                 {
                     Advance();
-                    switch(_currentChar)
+                    accumulator += _currentChar switch
                     {
-                        case 'n':
-                            accumulator += '\n';
-                            break;
-                        case 't':
-                            accumulator += '\t';
-                            break;
-                        case '"':
-                            accumulator += '"';
-                            break;
-                        default:
-                            accumulator += (string)"^" + _currentChar.ToString();
-                            break;
-                    }
+                        'n' => '\n',
+                        't' => '\t',
+                        '"' => '"',
+                        _ => (string)"^" + _currentChar.ToString(),
+                    };
                     Advance();
                 }
                 else
@@ -237,28 +229,20 @@ namespace C_Double_Flat.Core
 
         private Token KeywordFinder()
         {
-            string fromCurrent = new String(_script, _position._index, _script.Length - _position._index);
+            string fromCurrent = new(_script, _position._index, _script.Length - _position._index);
             fromCurrent = Regex.Split(fromCurrent, @"[\s\W]")[0];
             Advance(fromCurrent.Length);
-            switch (fromCurrent)
+            return fromCurrent switch
             {
-                case "if":
-                    return new Token(TokenType.IF, _position);
-                case "else":
-                    return new Token(TokenType.ELSE, _position);
-                case "loop":
-                    return new Token(TokenType.LOOP, _position);
-                case "return":
-                    return new Token(TokenType.RETURN, _position);
-                case "run":
-                    return new Token(TokenType.RUN, _position);
-                case "true":
-                    return new Token(TokenType.BOOL, "true", _position);
-                case "false":
-                    return new Token(TokenType.BOOL, "false", _position);
-                default:
-                    return new Token(TokenType.IDENTIFIER, fromCurrent, _position);
-            }
+                "if" => new Token(TokenType.IF, _position),
+                "else" => new Token(TokenType.ELSE, _position),
+                "loop" => new Token(TokenType.LOOP, _position),
+                "return" => new Token(TokenType.RETURN, _position),
+                "run" => new Token(TokenType.RUN, _position),
+                "true" => new Token(TokenType.BOOL, "true", _position),
+                "false" => new Token(TokenType.BOOL, "false", _position),
+                _ => new Token(TokenType.IDENTIFIER, fromCurrent, _position),
+            };
         }
 
         private Token MakeNumberTokens()

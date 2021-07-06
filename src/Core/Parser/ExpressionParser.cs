@@ -4,7 +4,6 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using C_Double_Flat.Errors;
-using System.Web.Script.Serialization;
 
 namespace C_Double_Flat.Core.Parser
 {

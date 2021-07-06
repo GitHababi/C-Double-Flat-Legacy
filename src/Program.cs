@@ -46,10 +46,10 @@ namespace C_Double_Flat
             
             if (!runWithArgs)
             {
-                Console.WriteLine("C Double Flat - REPL v1.2");
+                Console.WriteLine("C Double Flat - REPL v1.3");
                 Console.WriteLine("Created by Heerod Sahraei");
                 Console.WriteLine("Copyright (C) Hababisoft Corporation. All rights reserved.");
-                Console.WriteLine("Type: 'help<-();' for help.\n");
+                Console.WriteLine("Type: 'help;' for help.\n");
             }
 
             while (true)

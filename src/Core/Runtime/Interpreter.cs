@@ -10,8 +10,8 @@ namespace C_Double_Flat.Core.Runtime
 {
     public partial class Interpreter
     {
-        public static Dictionary<string, Value> globalVars = new Dictionary<string, Value>();
-        public static Dictionary<string, IFunction> Functions = new Dictionary<string, IFunction>();
+        public static Dictionary<string, Value> globalVars = new();
+        public static Dictionary<string, IFunction> Functions = new();
 
         public static Value Interpret(List<Statement> Statements, string dir, bool isScoped = false)
         {
@@ -29,7 +29,7 @@ namespace C_Double_Flat.Core.Runtime
 
         public static Value Interpret(List<Statement> Statements, ref Dictionary<string, Value> scope, string dir, out bool Returned, bool isScoped = false)
         {
-            Interpreter interpreter = new Interpreter(Statements, isScoped, dir)
+            Interpreter interpreter = new(Statements, isScoped, dir)
             {
                 scopedVars = scope
             };
@@ -40,10 +40,10 @@ namespace C_Double_Flat.Core.Runtime
 
         }
 
-        private readonly List<Statement> statements = new List<Statement>();
+        private readonly List<Statement> statements = new();
         private readonly bool isScoped;
         private bool Didreturned = false;
-        public Dictionary<string, Value> scopedVars = new Dictionary<string, Value>();
+        public Dictionary<string, Value> scopedVars = new();
         private int index = 0;
         public string currentDir;
 

@@ -16,7 +16,7 @@ namespace C_Double_Flat.Core.Runtime
             {
                 return Check((ConditionNode)node) ? new Value("true", ValueType.BOOL) : new Value("false", ValueType.BOOL);
             }
-            Value output = new Value();
+            Value output = new();
 
             switch (node.Type)
             {
@@ -63,7 +63,7 @@ namespace C_Double_Flat.Core.Runtime
 
             if (Interpreter.Functions.TryGetValue(call.Value, out IFunction function))
             {
-                List<Value> args = new List<Value>();
+                List<Value> args = new();
                 foreach (ExpressionNode expnode in call.Args) args.Add(InterpretExpression(expnode));
                 return function.Run(args);
             }
@@ -94,7 +94,7 @@ namespace C_Double_Flat.Core.Runtime
             left = ValueHelper.CastValue(left, ValueType.NUMBER);
             right = ValueHelper.CastValue(right, ValueType.NUMBER);
 
-            Value output = new Value
+            Value output = new()
             {
                 Data = (Convert.ToDouble(left.Data) - Convert.ToDouble(right.Data)).ToString(),
                 DataType = ValueType.NUMBER
@@ -107,7 +107,7 @@ namespace C_Double_Flat.Core.Runtime
         {
             ValueHelper.ResolveType(out Value left, out Value right, InterpretExpression(node.Left), InterpretExpression(node.Right));
 
-            Value output = new Value();
+            Value output = new();
 
             switch(left.DataType)
             {
@@ -133,7 +133,7 @@ namespace C_Double_Flat.Core.Runtime
             right = ValueHelper.CastValue(right, ValueType.NUMBER);
 
 
-            Value output = new Value
+            Value output = new()
             {
                 Data = (Convert.ToDouble(left.Data) * Convert.ToDouble(right.Data)).ToString(),
                 DataType = ValueType.NUMBER
@@ -156,7 +156,7 @@ namespace C_Double_Flat.Core.Runtime
                 throw new DivideByZeroException();
             }
 
-            Value output = new Value
+            Value output = new()
             {
                 Data = (Convert.ToDouble(left.Data) / Convert.ToDouble(right.Data)).ToString(),
                 DataType = ValueType.NUMBER

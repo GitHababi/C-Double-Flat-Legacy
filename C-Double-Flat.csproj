@@ -1,70 +1,20 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{28A34E3E-1A82-47FA-A18B-FAD830A3801C}</ProjectGuid>
+    <TargetFramework>net5.0</TargetFramework>
     <OutputType>Exe</OutputType>
     <RootNamespace>C_Double_Flat</RootNamespace>
-    <AssemblyName>C-Double-Flat</AssemblyName>
-    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
-    <FileAlignment>512</FileAlignment>
-    <Deterministic>true</Deterministic>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <PlatformTarget>AnyCPU</PlatformTarget>
-    <DebugSymbols>true</DebugSymbols>
-    <DebugType>full</DebugType>
-    <Optimize>false</Optimize>
-    <OutputPath>bin\Debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <PlatformTarget>AnyCPU</PlatformTarget>
-    <DebugType>pdbonly</DebugType>
-    <Optimize>true</Optimize>
-    <OutputPath>bin\Release\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
+    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
   </PropertyGroup>
   <PropertyGroup>
     <ApplicationIcon>c_sharp_c_seeklogo_com_HJn_icon.ico</ApplicationIcon>
   </PropertyGroup>
   <ItemGroup>
-    <None Include="App.config" />
+    <PackageReference Include="Microsoft.DotNet.UpgradeAssistant.Extensions.Default.Analyzers" Version="0.2.233001">
+      <PrivateAssets>all</PrivateAssets>
+    </PackageReference>
+    <PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="5.0.7" />
   </ItemGroup>
   <ItemGroup>
-    <Reference Include="System" />
-    <Reference Include="System.Web.Extensions" />
+    <FrameworkReference Include="Microsoft.AspNetCore.App" />
   </ItemGroup>
-  <ItemGroup>
-    <Compile Include="src\Core\Function.cs" />
-    <Compile Include="src\Core\Nodes\ConditionNode.cs" />
-    <Compile Include="src\Core\Parser\ConditionParser.cs" />
-    <Compile Include="src\Core\Parser\FunctionCallParser.cs" />
-    <Compile Include="src\Core\Runtime\ConditionInterpreter.cs" />
-    <Compile Include="src\Core\Runtime\ExpressionInterpreter.cs" />
-    <Compile Include="src\Core\Runtime\Interpreter.cs" />
-    <Compile Include="src\Core\Statement.cs" />
-    <Compile Include="src\Core\Parser\StatementParser.cs" />
-    <Compile Include="src\Core\Value.cs" />
-    <Compile Include="src\Errors\Errors.cs" />
-    <Compile Include="src\Core\Lexer.cs" />
-    <Compile Include="src\Core\Parser\ExpressionParser.cs" />
-    <Compile Include="src\Core\Position.cs" />
-    <Compile Include="src\Core\Token.cs" />
-    <Compile Include="src\Libraries\Standard.cs" />
-    <Compile Include="src\Program.cs" />
-    <Compile Include="src\Core\Nodes\ExpressionNode.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="c_sharp_c_seeklogo_com_HJn_icon.ico" />
-    <Content Include="Rules.txt" />
-  </ItemGroup>
-  <ItemGroup />
-  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
