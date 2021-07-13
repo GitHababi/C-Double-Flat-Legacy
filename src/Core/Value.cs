@@ -1,8 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace C_Double_Flat.Core
 {
@@ -14,11 +10,11 @@ namespace C_Double_Flat.Core
         public Value() { }
         public Value(string data, ValueType type) { this.Data = data; this.DataType = type; }
 
-        public static Value Default = new Value("0",ValueType.NUMBER);
+        public static Value Default = new Value("0", ValueType.NUMBER);
 
         public override string ToString()
         {
-            return String.Format("Type:{1} Value: {0}",Data,DataType);
+            return String.Format("Type:{1} Value: {0}", Data, DataType);
         }
 
     }
@@ -30,7 +26,7 @@ namespace C_Double_Flat.Core
         NUMBER
     }
 
-    public static class  ValueHelper
+    public static class ValueHelper
     {
         private readonly static ValueType[,] ResolvingTable = {
             { ValueType.STRING, ValueType.STRING, ValueType.STRING },
@@ -79,7 +75,7 @@ namespace C_Double_Flat.Core
 
         public static Value CastValue(Value value, ValueType type)
         {
-            
+
             switch (value.DataType)
             {
                 case ValueType.BOOL:

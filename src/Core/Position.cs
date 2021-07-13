@@ -1,14 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace C_Double_Flat.Core
+﻿namespace C_Double_Flat.Core
 {
     public class PositionHelper
     {
-        public static readonly Position None = new Position(0,0,0);
+        public static readonly Position None = new Position(0, 0, 0);
     }
     public struct Position
     {

@@ -1,10 +1,6 @@
-﻿using System;
+﻿using C_Double_Flat.Errors;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Text.RegularExpressions;
-using C_Double_Flat.Errors;
 namespace C_Double_Flat.Core
 {
     public class Lexer
@@ -241,6 +237,7 @@ namespace C_Double_Flat.Core
                 "run" => new Token(TokenType.RUN, _position),
                 "true" => new Token(TokenType.BOOL, "true", _position),
                 "false" => new Token(TokenType.BOOL, "false", _position),
+                "repeat" => new Token(TokenType.REPEAT, _position),
                 _ => new Token(TokenType.IDENTIFIER, fromCurrent, _position),
             };
         }

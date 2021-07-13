@@ -1,8 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace C_Double_Flat.Core
 {
@@ -10,8 +6,8 @@ namespace C_Double_Flat.Core
     {
         public ConditionNode(Token data) { Type = data.Type; }
         public ConditionNode(TokenType Type) { this.Type = Type; }
-        public ConditionNode() {}
-        
+        public ConditionNode() { }
+
         public override string ToString()
         {
             string output = "";

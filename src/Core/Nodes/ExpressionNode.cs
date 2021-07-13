@@ -1,8 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace C_Double_Flat.Core
 {
@@ -44,7 +41,7 @@ namespace C_Double_Flat.Core
             {
                 output = String.Format("[FUNCTION: {0}, ARGS: (", this.Value);
                 for (int x = 0; x < Args.Count - 1; x++) { output += String.Format("{0}, ", Args[x].ToString()); }
-                if(Args.Count > 0) output += String.Format("{0}", Args[Args.Count - 1].ToString());
+                if (Args.Count > 0) output += String.Format("{0}", Args[Args.Count - 1].ToString());
                 output += ")]";
             }
 

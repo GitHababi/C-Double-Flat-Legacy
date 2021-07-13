@@ -1,9 +1,5 @@
-﻿using System;
+﻿using C_Double_Flat.Errors;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using C_Double_Flat.Errors;
 
 namespace C_Double_Flat.Core.Parser
 {
@@ -55,7 +51,7 @@ namespace C_Double_Flat.Core.Parser
             tokens = TokenHelper.getFromParenthesis(tokens);
             index += tokens.Count;
             List<List<Token>> TokenArgs = new List<List<Token>>();
-            
+
             if (TokenHelper.Contains(tokens, TokenType.LPAREN))
             {
                 int local_index = 0;
@@ -85,7 +81,7 @@ namespace C_Double_Flat.Core.Parser
                     }
                     local_index++;
                 }
-                if(stack.Count != 0) TokenArgs.Add(stack);
+                if (stack.Count != 0) TokenArgs.Add(stack);
             }
             else
             {

@@ -1,10 +1,7 @@
-﻿using System;
+﻿using C_Double_Flat.Core.Parser;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.IO;
-using C_Double_Flat.Core.Parser;
+using System;
 
 namespace C_Double_Flat.Core.Runtime
 {
@@ -15,7 +12,7 @@ namespace C_Double_Flat.Core.Runtime
 
         public static Value Interpret(List<Statement> Statements, string dir, bool isScoped = false)
         {
-            return new Interpreter(Statements, isScoped,dir).Private_Interpret();
+            return new Interpreter(Statements, isScoped, dir).Private_Interpret();
         }
 
         /// <summary>
@@ -76,6 +73,11 @@ namespace C_Double_Flat.Core.Runtime
                     Value output = LoopStatement(out bool didReturn);
                     if (didReturn) { return output; }
                 }
+                else if (statements[index].GetType() == typeof(REPEAT))
+                {
+                    Value output = RepeatStatement(out bool didReturn);
+                    if (didReturn) return output;
+                }
                 else if (statements[index].GetType() == typeof(RUN)) RunRun();
             }
             return Value.Default;
@@ -92,9 +94,10 @@ namespace C_Double_Flat.Core.Runtime
             {
                 path = Path.Combine(currentDir, incomplete_path);
                 fullstring = File.ReadAllText(path);
-            } catch { }
+            }
+            catch { }
             Interpreter.Interpret(StatementParser.Parse(Lexer.Tokenize(fullstring), false), path);
-            
+
         }
 
         private void AssignVar()
@@ -136,7 +139,7 @@ namespace C_Double_Flat.Core.Runtime
             FUNCTION func = (FUNCTION)statements[index];
             IFunction function = new User_Function(func.Arguments, func.Statements);
             Functions.Remove(func.Identifier.Value);
-            if (globalVars.TryGetValue(func.Identifier.Value, out Value _)) globalVars.Remove(func.Identifier.Value); 
+            if (globalVars.TryGetValue(func.Identifier.Value, out Value _)) globalVars.Remove(func.Identifier.Value);
             Functions.Add(func.Identifier.Value, function);
         }
 
@@ -147,6 +150,23 @@ namespace C_Double_Flat.Core.Runtime
             Didreturned = true;
 
             return InterpretExpression(expression.Value);
+        }
+
+        private Value RepeatStatement(out bool didReturn)
+        {
+            REPEAT statement = (REPEAT)statements[index];
+
+            Value output = Value.Default;
+            didReturn = false;
+
+            int amount = Convert.ToInt32(Math.Floor(Convert.ToDouble(ValueHelper.CastValue(InterpretExpression(statement.Amount), ValueType.NUMBER).Data)));
+            // suffering
+            for (int x = 0; x < amount; x++)
+            {
+                output = Interpret(statement.Statements, ref scopedVars, currentDir, out didReturn, isScoped);
+                if (didReturn) break;
+            }
+            return output;
         }
 
         private Value IfStatement(out bool didReturn)

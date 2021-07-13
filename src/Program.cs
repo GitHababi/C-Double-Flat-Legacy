@@ -1,13 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using C_Double_Flat.Core;
+﻿using C_Double_Flat.Core;
 using C_Double_Flat.Core.Parser;
 using C_Double_Flat.Core.Runtime;
+using System;
+using System.Collections.Generic;
 using System.IO;
-using System.Runtime.Serialization.Formatters.Binary;
+using System.Linq;
 
 namespace C_Double_Flat
 {
@@ -23,7 +20,7 @@ namespace C_Double_Flat
 
             if (args.Length > 0)
             {
-                
+
                 if (File.Exists(args[0]))
                 {
                     try
@@ -43,13 +40,13 @@ namespace C_Double_Flat
                 }
 
             }
-            
+
             if (!runWithArgs)
             {
-                Console.WriteLine("C Double Flat - REPL v1.3");
+                Console.WriteLine("C Double Flat - REPL v1.4");
                 Console.WriteLine("Created by Heerod Sahraei");
                 Console.WriteLine("Copyright (C) Hababisoft Corporation. All rights reserved.");
-                Console.WriteLine("Type: 'help;' for help.\n");
+                Console.WriteLine("Type: 'help<-();' for help.\n");
             }
 
             while (true)
@@ -70,7 +67,7 @@ namespace C_Double_Flat
                         Tokens = Lexer.Tokenize(input);
                     }
 
-                    string output = Interpreter.Interpret(StatementParser.Parse(Tokens, false), ProgramLocation).Data + " <<<" ;
+                    string output = Interpreter.Interpret(StatementParser.Parse(Tokens, false), ProgramLocation).Data + " <<<";
                     Console.ForegroundColor = ConsoleColor.DarkGray;
                     Console.WriteLine(output);
                     Console.ResetColor();

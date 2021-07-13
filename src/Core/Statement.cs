@@ -1,8 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace C_Double_Flat.Core
 {
@@ -96,6 +93,24 @@ namespace C_Double_Flat.Core
         }
     }
 
+    public class REPEAT : Statement
+    {
+        public new StatementType Type = StatementType.REPEAT;
+        public ExpressionNode Amount;
+        public List<Statement> Statements;
+        public override string ToString()
+        {
+            string output = "- LOOP TIMES OF: " + Amount;
+
+
+            foreach (Statement st in Statements)
+            {
+                output += "\n\t" + st;
+            }
+            return output;
+        }
+    }
+
     public class FUNCTION : Statement
     {
         public new StatementType Type = StatementType.FUNCTION_ASSIGN;
@@ -141,6 +156,7 @@ namespace C_Double_Flat.Core
         LOOP,
         RETURN,
         RUN,
+        REPEAT,
         NONE
     }
 }

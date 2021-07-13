@@ -1,9 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using C_Double_Flat.Core;
+﻿using C_Double_Flat.Core;
+using System;
 
 namespace C_Double_Flat.Errors
 {

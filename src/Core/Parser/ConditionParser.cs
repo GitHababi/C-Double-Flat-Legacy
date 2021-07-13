@@ -1,9 +1,7 @@
-﻿using System;
+﻿using C_Double_Flat.Errors;
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using C_Double_Flat.Errors;
 
 namespace C_Double_Flat.Core.Parser
 {

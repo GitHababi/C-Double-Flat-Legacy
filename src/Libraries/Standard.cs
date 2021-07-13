@@ -1,12 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using C_Double_Flat.Core;
-using C_Double_Flat.Errors;
-using C_Double_Flat.Core.Runtime;
+﻿using C_Double_Flat.Core;
 using C_Double_Flat.Core.Parser;
+using C_Double_Flat.Core.Runtime;
+using C_Double_Flat.Errors;
+using System;
+using System.Collections.Generic;
 using System.IO;
 
 namespace C_Double_Flat.Libraries
@@ -37,7 +34,29 @@ namespace C_Double_Flat.Libraries
             { "string_lower", new Libraries.String_Lower()},
             { "string_upper", new Libraries.String_Upper()},
             { "string_length", new Libraries.String_Length()},
+            { "call", new Libraries.Call()},
         };
+    }
+
+    class Call : IFunction
+    {
+        string IFunction.Description()
+        {
+            return "Calls the specified function in the first argument, and passes any other argument to the called function.";
+        }
+        Value IFunction.Run(List<Value> Inputs)
+        {
+            if (Inputs.Count < 1) throw new ArgumentCountException(1, "call");
+
+            if (Interpreter.Functions.TryGetValue(Inputs[0].Data, out IFunction function))
+            {
+                Inputs.RemoveAt(0);
+                List<Value> args = new();
+                Inputs.ForEach(args.Add);
+                return function.Run(args);
+            }
+            return Value.Default;
+        }
     }
 
     class Template : IFunction
@@ -293,7 +312,7 @@ namespace C_Double_Flat.Libraries
 
         Value IFunction.Run(List<Value> Inputs)
         {
-            
+
             if (Inputs.Count == 1)
             {
                 if (Inputs[0].Data != null)
@@ -327,7 +346,7 @@ namespace C_Double_Flat.Libraries
                 }
 
             }
-                return Value.Default;
+            return Value.Default;
         }
     }
     class REPL_Exit : IFunction

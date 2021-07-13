@@ -1,9 +1,5 @@
-﻿using System;
+﻿using C_Double_Flat.Core.Runtime;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using C_Double_Flat.Core.Runtime;
 
 namespace C_Double_Flat.Core
 {
@@ -31,7 +27,7 @@ namespace C_Double_Flat.Core
 
         public Value Run(List<Value> Inputs)
         {
-            List <Statement> arguments = new List<Statement>();
+            List<Statement> arguments = new List<Statement>();
             for (int i = 0; i < args.Count; i++)
             {
                 ASSIGN a = new ASSIGN();

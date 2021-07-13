@@ -1,15 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 
 namespace C_Double_Flat.Core.Runtime
 {
     public partial class Interpreter
     {
-        
+
         private Value InterpretExpression(ExpressionNode node)
         {
             if (node.GetType() == typeof(ConditionNode))
@@ -24,7 +21,7 @@ namespace C_Double_Flat.Core.Runtime
                     output = Add(node);
                     break;
                 case TokenType.SUB:
-                    output = Subtract(node); 
+                    output = Subtract(node);
                     break;
                 case TokenType.MUL:
                     output = Multiply(node);
@@ -54,12 +51,12 @@ namespace C_Double_Flat.Core.Runtime
 
             return output;
         }
- 
+
 
         private Value CallFunction(ExpressionNode node)
         {
             FuncCallNode call = (FuncCallNode)node;
-            
+
 
             if (Interpreter.Functions.TryGetValue(call.Value, out IFunction function))
             {
@@ -72,13 +69,13 @@ namespace C_Double_Flat.Core.Runtime
 
         private Value GetValue(ExpressionNode node)
         {
-            if(!scopedVars.TryGetValue(node.Value, out Value output)) // First try to find a local definition
+            if (!scopedVars.TryGetValue(node.Value, out Value output)) // First try to find a local definition
             {
-                if(!Interpreter.globalVars.TryGetValue(node.Value, out output)) // Then a global definition
+                if (!Interpreter.globalVars.TryGetValue(node.Value, out output)) // Then a global definition
                 {
-                    if (Functions.TryGetValue(node.Value,out IFunction function)) // then call a function with no args
+                    if (Functions.TryGetValue(node.Value, out IFunction function)) // then call a function with no args
                     {
-                        return function.Run(new List<Value>()); 
+                        return function.Run(new List<Value>());
                     }
                     return Value.Default;
                 }
@@ -90,7 +87,7 @@ namespace C_Double_Flat.Core.Runtime
         {
             Value left = InterpretExpression(node.Left);
             Value right = InterpretExpression(node.Right);
-            
+
             left = ValueHelper.CastValue(left, ValueType.NUMBER);
             right = ValueHelper.CastValue(right, ValueType.NUMBER);
 
@@ -109,7 +106,7 @@ namespace C_Double_Flat.Core.Runtime
 
             Value output = new();
 
-            switch(left.DataType)
+            switch (left.DataType)
             {
                 case ValueType.NUMBER:
                     output.Data = (Convert.ToDouble(left.Data) + Convert.ToDouble(right.Data)).ToString();
@@ -128,7 +125,7 @@ namespace C_Double_Flat.Core.Runtime
         {
             Value left = InterpretExpression(node.Left);
             Value right = InterpretExpression(node.Right);
-            
+
             left = ValueHelper.CastValue(left, ValueType.NUMBER);
             right = ValueHelper.CastValue(right, ValueType.NUMBER);
 
@@ -147,8 +144,8 @@ namespace C_Double_Flat.Core.Runtime
         {
             Value left = InterpretExpression(node.Left);
             Value right = InterpretExpression(node.Right);
-            
-            left =  ValueHelper.CastValue(left, ValueType.NUMBER);
+
+            left = ValueHelper.CastValue(left, ValueType.NUMBER);
             right = ValueHelper.CastValue(right, ValueType.NUMBER);
 
             if (Convert.ToDouble(right.Data) == 0)

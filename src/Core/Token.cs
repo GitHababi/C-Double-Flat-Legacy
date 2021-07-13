@@ -1,15 +1,13 @@
-﻿using System;
+﻿using C_Double_Flat.Errors;
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using C_Double_Flat.Errors;
 namespace C_Double_Flat.Core
 {
     public static class TokenHelper
     {
         public static readonly Token None = new Token(TokenType.NONE, new Position(0, 0, 1));
-        public static readonly List<TokenType> conditions = new List<TokenType>() { TokenType.EQAL, TokenType.NOT_EQAL, 
+        public static readonly List<TokenType> conditions = new List<TokenType>() { TokenType.EQAL, TokenType.NOT_EQAL,
         TokenType.GRTR, TokenType.GRTR_EQ, TokenType.LESS, TokenType.LESS_EQ
         };
 
@@ -51,7 +49,7 @@ namespace C_Double_Flat.Core
             int output = 0;
             for (int x = 0; x < tokens.Count; x++)
             {
-                if (tokens[x].Type == token) output++; 
+                if (tokens[x].Type == token) output++;
             }
             return output;
         }
@@ -73,7 +71,7 @@ namespace C_Double_Flat.Core
                     if (tokens[x].Type == tokent) return true;
                 }
             }
-            
+
             return false;
         }
 
@@ -240,6 +238,7 @@ namespace C_Double_Flat.Core
         LOOP,
         RETURN,
         RUN,
+        REPEAT,
 
         // Special Tokens
 

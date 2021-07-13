@@ -1,13 +1,11 @@
-﻿using System;
+﻿using C_Double_Flat.Errors;
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using C_Double_Flat.Errors;
 
 namespace C_Double_Flat.Core.Parser
 {
-    
+
     public class ExpressionParser
     {
         public static ExpressionNode ParseLR(List<Token> tokens)
@@ -88,7 +86,7 @@ namespace C_Double_Flat.Core.Parser
                     index++;
                     output.Left = ParseTerm();
                     output.Type = TokenType.MUL;
-                    output.Right = new ExpressionNode(new Token(TokenType.NUMBER,"-1",tokens[index].Position));
+                    output.Right = new ExpressionNode(new Token(TokenType.NUMBER, "-1", tokens[index].Position));
                     return output;
                 default:
                     throw new ExpectedTokenException(tokens[index].Position, "[Number, String, Boolean, Expression]");

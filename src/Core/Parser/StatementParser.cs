@@ -1,9 +1,6 @@
-﻿using System;
+﻿using C_Double_Flat.Errors;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using C_Double_Flat.Errors;
 
 namespace C_Double_Flat.Core.Parser
 {
@@ -31,8 +28,8 @@ namespace C_Double_Flat.Core.Parser
         private List<Statement> Private_Parse()
         {
             List<Statement> output1 = new List<Statement>();
-            
-            while(true)
+
+            while (true)
             {
                 if (currentToken.Type == TokenType.NONE) break;
                 output1.Add(ParseStatement());
@@ -47,9 +44,9 @@ namespace C_Double_Flat.Core.Parser
             else throw new IncompleteExpressionException(tokens[index].Position);
         }
 
-        private void Expect (TokenType type)
+        private void Expect(TokenType type)
         {
-            if (currentToken.Type != type) throw new ExpectedTokenException(currentToken.Position, type.ToString());
+            if (currentToken.Type != type) throw new ExpectedTokenException(new Position(tokens[index - 1].Position._index, tokens[index - 1].Position._line, tokens[index - 1].Position._col +1), type.ToString());
         }
 
         private int NextStatementEnding()
@@ -101,10 +98,36 @@ namespace C_Double_Flat.Core.Parser
                     return ParseRun();
                 case TokenType.SUB:
                     return ParseExpressionStatement();
+                case TokenType.REPEAT:
+                    return ParseRepeat();
                 default:
                     index++;
                     return new NONE();
             }
+        }
+
+        private REPEAT ParseRepeat()
+        {
+            REPEAT output = new();
+
+            index += 1;
+            Expect(TokenType.LPAREN);
+
+            List<Token> inParenthesis = TokenHelper.getFromParenthesis(tokens.Skip(index).ToList());
+            if (inParenthesis.Count == 0) throw new EmptyConditionException(tokens[index].Position);
+            output.Amount = ExpressionParser.ParseLR(inParenthesis);
+
+            index += inParenthesis.Count + 1;
+            Expect(TokenType.ASSGN);
+
+            index++;
+
+            int end = TokenHelper.getMatchingBracket(tokens, index); // Find the matching } bracket to the {
+
+            output.Statements = StatementParser.Parse(tokens.Skip(index).Take(end + 1).ToList(), true);
+
+            index += end + 1;
+            return output;
         }
 
         private RUN ParseRun()
@@ -127,13 +150,13 @@ namespace C_Double_Flat.Core.Parser
 
         private LOOP ParseLoop()
         {
-            LOOP output = new LOOP();
+            LOOP output = new();
 
             index++;
             Expect(TokenType.LPAREN);
 
             List<Token> inParenthesis = TokenHelper.getFromParenthesis(tokens.Skip(index).ToList());
-            if (inParenthesis.Count == 0) throw new EmptyConditionException();
+            if (inParenthesis.Count == 0) throw new EmptyConditionException(tokens[index].Position);
             output.Condition = ConditionParser.Parse(inParenthesis);
 
             index += inParenthesis.Count + 2;
@@ -205,7 +228,7 @@ namespace C_Double_Flat.Core.Parser
 
             if (TokenHelper.Contains(tokens.Skip(index).Take(endpoint - index).ToList(), TokenHelper.conditions))
                 output.Value = ConditionParser.Parse(tokens.Skip(index).Take(endpoint - index).ToList());
-            else 
+            else
                 output.Value = ExpressionParser.ParseLR(tokens.Skip(index).Take(endpoint - index).ToList());
 
             index += endpoint - index;
@@ -215,11 +238,11 @@ namespace C_Double_Flat.Core.Parser
 
         private ASSIGN ParseAssignment()
         {
-            
+
             ASSIGN output = new ASSIGN();
 
             output.Identifier = currentToken;
-            
+
             index += 2; // Adding to index because we just skipped past an assignment token and identifier
 
             int endpoint = NextStatementEnding();
@@ -230,7 +253,7 @@ namespace C_Double_Flat.Core.Parser
                 output.Value = ExpressionParser.ParseLR(tokens.Skip(index).Take(endpoint - index).ToList());
 
             index = endpoint + 1;
-            
+
             return output;
         }
 
@@ -268,14 +291,14 @@ namespace C_Double_Flat.Core.Parser
             index++;
 
             int terminal = NextStatementEnding(); // to make sure we dont accidentally take past the ; 
-            
+
             Expect(TokenType.LPAREN);
 
             List<Token> inputs = TokenHelper.getFromParenthesis(tokens.Skip(index).Take(terminal - index).ToList(), 0);
-            
+
             List<Token> args = new List<Token>();
-            
-            foreach(Token input in inputs)
+
+            foreach (Token input in inputs)
             {
                 if (input.Type != TokenType.IDENTIFIER && input.Type != TokenType.COMMA)
                 {
@@ -293,5 +316,5 @@ namespace C_Double_Flat.Core.Parser
             return output;
         }
     }
-    
+
 }
