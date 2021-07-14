@@ -5,16 +5,25 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Runtime.InteropServices;
+using System.Threading;
 
 namespace C_Double_Flat
 {
     class Program
     {
         public static string ProgramLocation = Directory.GetCurrentDirectory();
+        [DllImport("Kernel32.dll")]
+        public static extern IntPtr GetConsoleWindow();
+        [DllImport("User32.dll")]
+        public static extern bool ShowWindow(IntPtr hWnd, int cmdShow);
+
+
+
 
         public static void Main(string[] args)
         {
-
+            ShowWindow(GetConsoleWindow(), 1);
             Interpreter.Functions.Append(Libraries.Standard.Library);
             bool runWithArgs = false;
 
@@ -27,7 +36,9 @@ namespace C_Double_Flat
                     {
 
                         runWithArgs = true;
-                        string output = Interpreter.Interpret(StatementParser.Parse(Lexer.Tokenize(File.ReadAllText(args[0])), false), Path.GetDirectoryName(args[0])).Data + " <<<";
+                        List<Token> Tokens = Lexer.Tokenize(File.ReadAllText(args[0]));
+                        // For some reason, combining these two lines break the program, so don't do it.
+                        string output = Interpreter.Interpret(StatementParser.Parse(Tokens, false), Path.GetDirectoryName(args[0])).Data + " <<<";
                         Console.ForegroundColor = ConsoleColor.DarkGray;
                         Console.WriteLine(output);
                         Console.ResetColor();
@@ -41,9 +52,15 @@ namespace C_Double_Flat
 
             }
 
+            REPL_Loop(runWithArgs);
+
+        }
+
+        private static void REPL_Loop(bool runWithArgs)
+        {
             if (!runWithArgs)
             {
-                Console.WriteLine("C Double Flat - REPL v1.4");
+                Console.WriteLine("C Double Flat - REPL v1.4.1");
                 Console.WriteLine("Created by Heerod Sahraei");
                 Console.WriteLine("Copyright (C) Hababisoft Corporation. All rights reserved.");
                 Console.WriteLine("Type: 'help<-();' for help.\n");

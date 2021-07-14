@@ -5,38 +5,62 @@ using C_Double_Flat.Errors;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Threading;
 
 namespace C_Double_Flat.Libraries
 {
     class Standard
     {
-        public static Dictionary<string, IFunction> Library = new Dictionary<string, IFunction>()
+        public static Dictionary<string, IFunction> Library = new()
         {
-            {"help", new Libraries.REPL_Help() },
-            {"exit", new Libraries.REPL_Exit() },
-            {"disp_echo", new Libraries.Display_Echo()},
-            {"disp_prompt", new Libraries.Display_Prompt()},
-            {"disp_clear", new Libraries.Display_Clear()},
-            //{"dbug_vars", new Libraries.Debug_Vars()}, 
-             // Uncomment these two lines to enable debug functions.
-            //{"dbug_parse", new Libraries.Debug_Parse()},
-            {"math_abs", new Libraries.Math_Abs()},
-            {"math_round", new Libraries.Math_Round()},
-            {"math_rand", new Libraries.Math_Rand()},
-            {"math_mod", new Libraries.Math_Modulo()},
-            {"math_pow", new Libraries.Math_Power()},
-            {"math_sqrt", new Libraries.Math_Sqrt()},
-            {"file_read", new Libraries.File_Read()},
-            {"file_save", new Libraries.File_Save()},
-            {"file_copy", new Libraries.File_Copy()},
-            {"file_delete", new Libraries.File_Delete()},
-            { "string_has", new Libraries.String_Contains()},
-            { "string_lower", new Libraries.String_Lower()},
-            { "string_upper", new Libraries.String_Upper()},
-            { "string_length", new Libraries.String_Length()},
-            { "call", new Libraries.Call()},
+            { "help", new Libraries.REPL_Help() },
+            { "exit", new Libraries.REPL_Exit() },
+            { "disp_echo", new Libraries.Display_Echo() },
+            { "disp_prompt", new Libraries.Display_Prompt() },
+            { "disp_clear", new Libraries.Display_Clear() },
+            { "disp_hide", new Libraries.Display_Hide() },
+            { "disp_show", new Libraries.Display_Show() },
+            { "dbug_vars", new Libraries.Debug_Vars() },
+            // Uncomment these two lines to enable debug functions.
+            { "dbug_parse", new Libraries.Debug_Parse() },
+            { "math_abs", new Libraries.Math_Abs() },
+            { "math_round", new Libraries.Math_Round() },
+            { "math_rand", new Libraries.Math_Rand() },
+            { "math_mod", new Libraries.Math_Modulo() },
+            { "math_pow", new Libraries.Math_Power() },
+            { "math_sqrt", new Libraries.Math_Sqrt() },
+            { "file_read", new Libraries.File_Read() },
+            { "file_save", new Libraries.File_Save() },
+            { "file_copy", new Libraries.File_Copy() },
+            { "file_delete", new Libraries.File_Delete() },
+            { "string_has", new Libraries.String_Contains() },
+            { "string_lower", new Libraries.String_Lower() },
+            { "string_upper", new Libraries.String_Upper() },
+            { "string_length", new Libraries.String_Length() },
+            { "call", new Libraries.Call() },
+            { "wait", new Libraries.Wait() },
+
         };
     }
+    #region Other
+    class Wait : IFunction
+    {
+        string IFunction.Description()
+        {
+            return "Waits the amount of milliseconds specified in the first argument before continuing running the program";
+        }
+
+        Value IFunction.Run(List<Value> Inputs)
+        {
+            
+            if (Inputs.Count < 1) throw new ArgumentCountException(1, "wait");
+
+            int amount = Convert.ToInt32(Math.Floor(Convert.ToDouble(ValueHelper.CastValue(Inputs[0], Core.ValueType.NUMBER).Data)));
+            Thread.Sleep(amount);
+            return Value.Default;
+        }
+    }
+
 
     class Call : IFunction
     {
@@ -58,7 +82,7 @@ namespace C_Double_Flat.Libraries
             return Value.Default;
         }
     }
-
+    #endregion
     class Template : IFunction
     {
         string IFunction.Description()
@@ -85,7 +109,7 @@ namespace C_Double_Flat.Libraries
             int lower = (int)Math.Round(Convert.ToDouble(ValueHelper.CastValue(values[0], Core.ValueType.NUMBER).Data));
             int upper = (int)Math.Round(Convert.ToDouble(ValueHelper.CastValue(values[1], Core.ValueType.NUMBER).Data));
 
-            Random random = new Random();
+            Random random = new();
             return new Value(random.Next(lower, upper).ToString(), Core.ValueType.NUMBER);
         }
     }
@@ -232,6 +256,34 @@ namespace C_Double_Flat.Libraries
     }
     #endregion
     #region Display
+    class Display_Hide : IFunction
+    {
+        string IFunction.Description()
+        {
+            return "Hides console window from view and input, but it does not close Cbb when hidden.";
+        }
+
+        Value IFunction.Run(List<Value> Inputs)
+        {
+            Program.ShowWindow(Program.GetConsoleWindow(), 0);
+            return Value.Default;
+        }
+    }
+
+    class Display_Show : IFunction
+    {
+        string IFunction.Description()
+        {
+            return "Shows console window.";
+        }
+
+        Value IFunction.Run(List<Value> Inputs)
+        {
+            Program.ShowWindow(Program.GetConsoleWindow(), 1);
+            return Value.Default;
+        }
+    }
+
     class Display_Echo : IFunction
     {
         public string Description()
@@ -294,9 +346,10 @@ namespace C_Double_Flat.Libraries
         }
         public Value Run(List<Value> Inputs)
         {
-            foreach (string key in Interpreter.globalVars.Keys)
+            foreach (string key in Interpreter.GlobalVars.Keys)
             {
-                Console.WriteLine(key);
+                Interpreter.GlobalVars.TryGetValue(key, out Value val);
+                Console.WriteLine(key + " OF TYPE: " + val.DataType + " = " + val.Data);
             }
             return Value.Default;
         }
@@ -323,7 +376,7 @@ namespace C_Double_Flat.Libraries
                         foreach (string key in Interpreter.Functions.Keys)
                         {
                             Interpreter.Functions.TryGetValue(key, out IFunction function);
-                            Console.WriteLine(String.Format("{0} - {1}.", key, function.Description()));
+                            Console.WriteLine(String.Format("{0} => {1}", key, function.Description()));
                         }
                     }
                     else if (Inputs[0].Data.ToLower() == "syntax")
@@ -344,7 +397,12 @@ namespace C_Double_Flat.Libraries
                     "For help regarding available functions, type 'help<-(\"functions\");'\n" +
                     "For help regarding syntax, type 'help<-(\"syntax\");'\n");
                 }
-
+            }
+            else
+            {
+                Console.WriteLine("A programming language that you could use, but shouldn't.\n" +
+                "For help regarding available functions, type 'help<-(\"functions\");'\n" +
+                "For help regarding syntax, type 'help<-(\"syntax\");'\n");
             }
             return Value.Default;
         }

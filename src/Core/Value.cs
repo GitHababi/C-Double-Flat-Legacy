@@ -10,7 +10,7 @@ namespace C_Double_Flat.Core
         public Value() { }
         public Value(string data, ValueType type) { this.Data = data; this.DataType = type; }
 
-        public static Value Default = new Value("0", ValueType.NUMBER);
+        public static Value Default = new("0", ValueType.NUMBER);
 
         public override string ToString()
         {
@@ -36,7 +36,7 @@ namespace C_Double_Flat.Core
 
         public static Value TokenToValue(Token token)
         {
-            Value output = new Value();
+            Value output = new();
 
             switch (token.Type)
             {
@@ -60,17 +60,14 @@ namespace C_Double_Flat.Core
         public static Token ValueToToken(Value value)
         {
 
-            switch (value.DataType)
-            {
-                case ValueType.BOOL:
-                    return new Token(TokenType.BOOL, value.Data, PositionHelper.None);
-                case ValueType.STRING:
-                    return new Token(TokenType.STRING, value.Data, PositionHelper.None);
-                case ValueType.NUMBER:
-                    return new Token(TokenType.NUMBER, value.Data, PositionHelper.None);
-            }
 
-            return TokenHelper.None;
+            return value.DataType switch
+            {
+                ValueType.BOOL => new Token(TokenType.BOOL, value.Data, PositionHelper.None),
+                ValueType.STRING => new Token(TokenType.STRING, value.Data, PositionHelper.None),
+                ValueType.NUMBER => new Token(TokenType.NUMBER, value.Data, PositionHelper.None),
+                _ => TokenHelper.None,
+            };
         }
 
         public static Value CastValue(Value value, ValueType type)

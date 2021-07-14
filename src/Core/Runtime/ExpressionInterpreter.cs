@@ -71,7 +71,7 @@ namespace C_Double_Flat.Core.Runtime
         {
             if (!scopedVars.TryGetValue(node.Value, out Value output)) // First try to find a local definition
             {
-                if (!Interpreter.globalVars.TryGetValue(node.Value, out output)) // Then a global definition
+                if (!Interpreter.GlobalVars.TryGetValue(node.Value, out output)) // Then a global definition
                 {
                     if (Functions.TryGetValue(node.Value, out IFunction function)) // then call a function with no args
                     {

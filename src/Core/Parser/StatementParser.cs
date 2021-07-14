@@ -113,7 +113,7 @@ namespace C_Double_Flat.Core.Parser
             index += 1;
             Expect(TokenType.LPAREN);
 
-            List<Token> inParenthesis = TokenHelper.getFromParenthesis(tokens.Skip(index).ToList());
+            List<Token> inParenthesis = TokenHelper.GetFromParenthesis(tokens.Skip(index).ToList());
             if (inParenthesis.Count == 0) throw new EmptyConditionException(tokens[index].Position);
             output.Amount = ExpressionParser.ParseLR(inParenthesis);
 
@@ -122,7 +122,7 @@ namespace C_Double_Flat.Core.Parser
 
             index++;
 
-            int end = TokenHelper.getMatchingBracket(tokens, index); // Find the matching } bracket to the {
+            int end = TokenHelper.GetMatchingBracket(tokens, index); // Find the matching } bracket to the {
 
             output.Statements = StatementParser.Parse(tokens.Skip(index).Take(end + 1).ToList(), true);
 
@@ -155,7 +155,7 @@ namespace C_Double_Flat.Core.Parser
             index++;
             Expect(TokenType.LPAREN);
 
-            List<Token> inParenthesis = TokenHelper.getFromParenthesis(tokens.Skip(index).ToList());
+            List<Token> inParenthesis = TokenHelper.GetFromParenthesis(tokens.Skip(index).ToList());
             if (inParenthesis.Count == 0) throw new EmptyConditionException(tokens[index].Position);
             output.Condition = ConditionParser.Parse(inParenthesis);
 
@@ -164,7 +164,7 @@ namespace C_Double_Flat.Core.Parser
 
             index++;
 
-            int end = TokenHelper.getMatchingBracket(tokens, index); // Find the matching } bracket to the {
+            int end = TokenHelper.GetMatchingBracket(tokens, index); // Find the matching } bracket to the {
 
             output.Statements = StatementParser.Parse(tokens.Skip(index).Take(end + 1).ToList(), true);
 
@@ -178,7 +178,7 @@ namespace C_Double_Flat.Core.Parser
             IF output = new IF();
             index++;
             Expect(TokenType.LPAREN);
-            List<Token> inParenthesis = TokenHelper.getFromParenthesis(tokens.Skip(index).ToList());
+            List<Token> inParenthesis = TokenHelper.GetFromParenthesis(tokens.Skip(index).ToList());
 
             if (inParenthesis.Count == 0) throw new EmptyConditionException(tokens[index].Position);
 
@@ -190,7 +190,7 @@ namespace C_Double_Flat.Core.Parser
 
             index++;
 
-            int end = TokenHelper.getMatchingBracket(tokens, index); // Find the matching } bracket to the {
+            int end = TokenHelper.GetMatchingBracket(tokens, index); // Find the matching } bracket to the {
 
             output.If = StatementParser.Parse(tokens.Skip(index).Take(end + 1).ToList(), true);
 
@@ -204,7 +204,7 @@ namespace C_Double_Flat.Core.Parser
 
                 index++;
 
-                int else_end = TokenHelper.getMatchingBracket(tokens, index); // Find the matching } bracket to the {
+                int else_end = TokenHelper.GetMatchingBracket(tokens, index); // Find the matching } bracket to the {
 
                 output.Else = StatementParser.Parse(tokens.Skip(index).Take(else_end + 1).ToList(), true);
 
@@ -280,7 +280,7 @@ namespace C_Double_Flat.Core.Parser
 
             Expect(TokenType.LCURLY);
 
-            int end = TokenHelper.getMatchingBracket(tokens, index); // Find the matching } bracket to the {
+            int end = TokenHelper.GetMatchingBracket(tokens, index); // Find the matching } bracket to the {
 
             output.Statements = StatementParser.Parse(tokens.Skip(index).Take(end + 1).ToList(), true); // get the statements
 
@@ -294,7 +294,7 @@ namespace C_Double_Flat.Core.Parser
 
             Expect(TokenType.LPAREN);
 
-            List<Token> inputs = TokenHelper.getFromParenthesis(tokens.Skip(index).Take(terminal - index).ToList(), 0);
+            List<Token> inputs = TokenHelper.GetFromParenthesis(tokens.Skip(index).Take(terminal - index).ToList(), 0);
 
             List<Token> args = new List<Token>();
 

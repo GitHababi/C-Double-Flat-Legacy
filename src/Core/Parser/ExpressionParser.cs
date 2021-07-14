@@ -79,7 +79,7 @@ namespace C_Double_Flat.Core.Parser
                 case TokenType.BOOL:
                     return new ExpressionNode(tokens[index]);
                 case TokenType.LPAREN:
-                    List<Token> n = TokenHelper.getFromParenthesis(tokens, index);
+                    List<Token> n = TokenHelper.GetFromParenthesis(tokens, index);
                     index += n.Count + 1;
                     return ExpressionParser.ParseLR(n);
                 case TokenType.SUB:

@@ -7,7 +7,7 @@ namespace C_Double_Flat.Core.Runtime
 {
     public partial class Interpreter
     {
-        public static Dictionary<string, Value> globalVars = new();
+        public static Dictionary<string, Value> GlobalVars = new();
         public static Dictionary<string, IFunction> Functions = new();
 
         public static Value Interpret(List<Statement> Statements, string dir, bool isScoped = false)
@@ -107,24 +107,24 @@ namespace C_Double_Flat.Core.Runtime
             if (isScoped)
             {
                 Value newValue = InterpretExpression(assigner.Value);
-                if (!globalVars.TryGetValue(assigner.Identifier.Value, out Value _)) // if the global doesnt exist, do it locally
+                if (!GlobalVars.TryGetValue(assigner.Identifier.Value, out Value _)) // if the global doesnt exist, do it locally
                 {
                     scopedVars.Remove(assigner.Identifier.Value);
                     scopedVars.Add(assigner.Identifier.Value, newValue);
                 }
                 else
                 {
-                    globalVars.Remove(assigner.Identifier.Value);
-                    globalVars.Add(assigner.Identifier.Value, newValue);
+                    GlobalVars.Remove(assigner.Identifier.Value);
+                    GlobalVars.Add(assigner.Identifier.Value, newValue);
                 }
 
             }
             else
             {
                 Value newValue = InterpretExpression(assigner.Value);
-                globalVars.Remove(assigner.Identifier.Value);
+                GlobalVars.Remove(assigner.Identifier.Value);
                 if (Functions.ContainsKey(assigner.Identifier.Value)) Functions.Remove(assigner.Identifier.Value);
-                globalVars.Add(assigner.Identifier.Value, newValue);
+                GlobalVars.Add(assigner.Identifier.Value, newValue);
             }
         }
 
@@ -139,7 +139,7 @@ namespace C_Double_Flat.Core.Runtime
             FUNCTION func = (FUNCTION)statements[index];
             IFunction function = new User_Function(func.Arguments, func.Statements);
             Functions.Remove(func.Identifier.Value);
-            if (globalVars.TryGetValue(func.Identifier.Value, out Value _)) globalVars.Remove(func.Identifier.Value);
+            if (GlobalVars.TryGetValue(func.Identifier.Value, out Value _)) GlobalVars.Remove(func.Identifier.Value);
             Functions.Add(func.Identifier.Value, function);
         }
 

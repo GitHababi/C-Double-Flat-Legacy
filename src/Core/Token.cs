@@ -6,15 +6,15 @@ namespace C_Double_Flat.Core
 {
     public static class TokenHelper
     {
-        public static readonly Token None = new Token(TokenType.NONE, new Position(0, 0, 1));
-        public static readonly List<TokenType> conditions = new List<TokenType>() { TokenType.EQAL, TokenType.NOT_EQAL,
+        public static readonly Token None = new(TokenType.NONE, new Position(0, 0, 1));
+        public static readonly List<TokenType> conditions = new() { TokenType.EQAL, TokenType.NOT_EQAL,
         TokenType.GRTR, TokenType.GRTR_EQ, TokenType.LESS, TokenType.LESS_EQ
         };
 
 
         public static List<List<Token>> Split(List<Token> tokens, TokenType splitter)
         {
-            List<List<Token>> output = new List<List<Token>>();
+            List<List<Token>> output = new();
 
             int count = NumberOf(tokens, splitter);
             if (count == 0) { output.Add(tokens); return output; }
@@ -75,7 +75,7 @@ namespace C_Double_Flat.Core
             return false;
         }
 
-        public static List<Token> getFromBrackets(List<Token> tokens, int index = 0)
+        public static List<Token> GetFromBrackets(List<Token> tokens, int index = 0)
         {
             if (tokens == null) throw new ArgumentNullException("tokens");
             if (tokens.Count == 0) throw new Exception
@@ -105,7 +105,7 @@ namespace C_Double_Flat.Core
             if (index + 1 == index + gap) return new List<Token>();
             return tokens.ToArray().Skip(index + 1).Take(gap - 1).ToList();
         }
-        public static int getMatchingBracket(List<Token> tokens, int index = 0)
+        public static int GetMatchingBracket(List<Token> tokens, int index = 0)
         {
             if (tokens == null) throw new ArgumentNullException("tokens");
             if (tokens.Count == 0) throw new Exception
@@ -135,7 +135,7 @@ namespace C_Double_Flat.Core
             return gap;
         }
 
-        public static List<Token> getFromParenthesis(List<Token> tokens, int index = 0)
+        public static List<Token> GetFromParenthesis(List<Token> tokens, int index = 0)
         {
             if (tokens == null) throw new ArgumentNullException("tokens");
             if (tokens.Count == 0) return new List<Token>();

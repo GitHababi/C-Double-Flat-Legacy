@@ -48,7 +48,7 @@ namespace C_Double_Flat.Core.Parser
         {
             List<ExpressionNode> output = new List<ExpressionNode>();
 
-            tokens = TokenHelper.getFromParenthesis(tokens);
+            tokens = TokenHelper.GetFromParenthesis(tokens);
             index += tokens.Count;
             List<List<Token>> TokenArgs = new List<List<Token>>();
 
