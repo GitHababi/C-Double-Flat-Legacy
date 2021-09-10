@@ -18,9 +18,12 @@ namespace C_Double_Flat.Core.Standard
             { "disp_echo", new Display_Echo() },
             { "disp_prompt", new Display_Prompt() },
             { "disp_clear", new Display_Clear() },
+
+            // The following two lines are debug functions, they can be disabled by being commented out.
+
             { "dbug_vars", new Debug_Vars() },
-            // Uncomment these two lines to enable debug functions.
             { "dbug_parse", new Debug_Parse() },
+
             { "math_abs", new Math_Abs() },
             { "math_round", new Math_Round() },
             { "math_rand", new Math_Rand() },
@@ -444,7 +447,7 @@ namespace C_Double_Flat.Core.Standard
         Value IFunction.Run(List<Value> Inputs)
         {
             if (Inputs.Count < 1) throw new ArgumentCountException(1, "string_length");
-            return new Value(Inputs[0].Data.Length.ToString());
+            return new Value(Inputs[0].Data.Length);
         }
     }
     class String_Split : IFunction
@@ -458,6 +461,17 @@ namespace C_Double_Flat.Core.Standard
         {
             if (Inputs.Count < 3) throw new ArgumentCountException(3, "string_split");
             string[] split = ((string)Inputs[0]).Split((string)Inputs[1]);
+            
+            
+            if ((string)Inputs[1] == "") //if split by '' then divide each char.
+            {
+                char[] temp = ((string)Inputs[0]).ToCharArray();
+                split = new string[temp.Length];
+                for (int i = 0; i < temp.Length; i++)
+                {
+                    split[i] = temp[i].ToString();
+                }
+            }
             try
             {
                 return new (split[(int)Inputs[2]]);

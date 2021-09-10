@@ -34,7 +34,7 @@ namespace C_Double_Flat.Core.Runtime
             Returned = interpreter.Didreturned;
             scope = interpreter.scopedVars;
             return output;
-
+            
         }
 
         private readonly List<Statement> statements = new();
@@ -56,11 +56,11 @@ namespace C_Double_Flat.Core.Runtime
             for (int i = 0; i < statements.Count; i++)
             {
                 index = i;
-                if (statements[index].GetType() == typeof(ASSIGN)) AssignVar();
-                else if (statements[index].GetType() == typeof(EXPRESSION)) RunExpression();
-                else if (statements[index].GetType() == typeof(FUNCTION)) { AssignFunction(); }
-                else if (statements[index].GetType() == typeof(RETURN)) { return Return(); }
-                else if (statements[index].GetType() == typeof(IF))
+                if (statements[index].GetType() == typeof(AssignStatement)) AssignVar();
+                else if (statements[index].GetType() == typeof(ExpressionStatement)) RunExpression();
+                else if (statements[index].GetType() == typeof(FunctionStatement)) { AssignFunction(); }
+                else if (statements[index].GetType() == typeof(ReturnStatement)) { return Return(); }
+                else if (statements[index].GetType() == typeof(IfStatement))
                 {
                     Value output = IfStatement(out bool didReturn);
                     if (didReturn)
@@ -68,24 +68,24 @@ namespace C_Double_Flat.Core.Runtime
                         return output;
                     }
                 }
-                else if (statements[index].GetType() == typeof(LOOP))
+                else if (statements[index].GetType() == typeof(LoopStatement))
                 {
                     Value output = LoopStatement(out bool didReturn);
                     if (didReturn) { return output; }
                 }
-                else if (statements[index].GetType() == typeof(REPEAT))
+                else if (statements[index].GetType() == typeof(RepeatStatement))
                 {
                     Value output = RepeatStatement(out bool didReturn);
                     if (didReturn) return output;
                 }
-                else if (statements[index].GetType() == typeof(RUN)) RunRun();
+                else if (statements[index].GetType() == typeof(RunStatement)) RunRun();
             }
             return Value.Default;
         }
 
         private void RunRun()
         {
-            RUN runningstatement = (RUN)statements[index];
+            RunStatement runningstatement = (RunStatement)statements[index];
             string incomplete_path = InterpretExpression(runningstatement.Path).CastValue(ValueType.STRING).Data;
 
             string fullstring = "";
@@ -102,7 +102,7 @@ namespace C_Double_Flat.Core.Runtime
 
         private void AssignVar()
         {
-            ASSIGN assigner = (ASSIGN)statements[index];
+            AssignStatement assigner = (AssignStatement)statements[index];
             string name;
 
             if (assigner.IsAsName)
@@ -140,13 +140,13 @@ namespace C_Double_Flat.Core.Runtime
 
         private void RunExpression()
         {
-            EXPRESSION expression = (EXPRESSION)statements[index];
+            ExpressionStatement expression = (ExpressionStatement)statements[index];
             InterpretExpression(expression.Value);
         }
 
         private void AssignFunction()
         {
-            FUNCTION func = (FUNCTION)statements[index];
+            FunctionStatement func = (FunctionStatement)statements[index];
 
             string id;
             if (func.IsAsName)
@@ -166,7 +166,7 @@ namespace C_Double_Flat.Core.Runtime
 
         private Value Return()
         {
-            RETURN expression = (RETURN)statements[index];
+            ReturnStatement expression = (ReturnStatement)statements[index];
 
             Didreturned = true;
 
@@ -175,7 +175,7 @@ namespace C_Double_Flat.Core.Runtime
 
         private Value RepeatStatement(out bool didReturn)
         {
-            REPEAT statement = (REPEAT)statements[index];
+            RepeatStatement statement = (RepeatStatement)statements[index];
 
             Value output = Value.Default;
             didReturn = false;
@@ -192,7 +192,7 @@ namespace C_Double_Flat.Core.Runtime
 
         private Value IfStatement(out bool didReturn)
         {
-            IF statement = (IF)statements[index];
+            IfStatement statement = (IfStatement)statements[index];
 
 
 
@@ -208,7 +208,7 @@ namespace C_Double_Flat.Core.Runtime
 
         private Value LoopStatement(out bool didReturn)
         {
-            LOOP statement = (LOOP)statements[index];
+            LoopStatement statement = (LoopStatement)statements[index];
 
             Value output = Value.Default;
             didReturn = false;

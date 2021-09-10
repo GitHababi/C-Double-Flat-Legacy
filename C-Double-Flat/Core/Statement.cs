@@ -9,7 +9,7 @@ namespace C_Double_Flat.Core
         public object ReturnSelf() { return this; }
     }
 
-    public class RUN : Statement
+    public class RunStatement : Statement
     {
         public new StatementType Type = StatementType.RUN;
         public ExpressionNode Path;
@@ -19,7 +19,7 @@ namespace C_Double_Flat.Core
         }
     }
 
-    public class NONE : Statement
+    public class NoOperationStatement : Statement
     {
         public new StatementType Type = StatementType.NONE;
         public override string ToString()
@@ -28,7 +28,7 @@ namespace C_Double_Flat.Core
         }
     }
 
-    public class IF : Statement
+    public class IfStatement : Statement
     {
         public ConditionNode Condition;
         public new StatementType Type = StatementType.IF;
@@ -52,7 +52,7 @@ namespace C_Double_Flat.Core
     }
 
 
-    public class ASSIGN : Statement
+    public class AssignStatement : Statement
     {
         public new StatementType Type = StatementType.ASSIGN;
         public Token Identifier;
@@ -67,7 +67,7 @@ namespace C_Double_Flat.Core
         }
     }
 
-    public class RETURN : Statement
+    public class ReturnStatement : Statement
     {
         public new StatementType Type = StatementType.RETURN;
         public ExpressionNode Value;
@@ -77,7 +77,7 @@ namespace C_Double_Flat.Core
         }
     }
 
-    public class LOOP : Statement
+    public class LoopStatement : Statement
     {
         public new StatementType Type = StatementType.LOOP;
         public ConditionNode Condition;
@@ -96,7 +96,7 @@ namespace C_Double_Flat.Core
         }
     }
 
-    public class REPEAT : Statement
+    public class RepeatStatement : Statement
     {
         public new StatementType Type = StatementType.REPEAT;
         public ExpressionNode Amount;
@@ -114,7 +114,7 @@ namespace C_Double_Flat.Core
         }
     }
 
-    public class FUNCTION : Statement
+    public class FunctionStatement : Statement
     {
         public new StatementType Type = StatementType.FUNCTION_ASSIGN;
         public List<Statement> Statements;
@@ -141,7 +141,7 @@ namespace C_Double_Flat.Core
         }
     }
 
-    public class EXPRESSION : Statement
+    public class ExpressionStatement : Statement
     {
         public new StatementType Type = StatementType.EXPRESSION;
         public ExpressionNode Value;

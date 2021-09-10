@@ -46,14 +46,15 @@ namespace C_Double_Flat
 
         }
 
+
         private static void REPL_Loop(bool runWithArgs)
         {
             if (!runWithArgs)
             {
-                Console.WriteLine("C Double Flat - REPL v1.5");
+                Console.WriteLine("C Double Flat - REPL v1.5.1");
                 Console.WriteLine("Created by Heerod Sahraei");
                 Console.WriteLine("Copyright (C) Hababisoft Corporation. All rights reserved.");
-                Console.WriteLine("Type: 'help<-();' for help.\n");
+                Console.WriteLine("Type: 'help;' for help.\n");
             }
 
             while (true)
@@ -74,7 +75,6 @@ namespace C_Double_Flat
                         Tokens = Lexer.Tokenize(input);
                     }
 
-                    StatementParser.Parse(Tokens, false).ConsoleWrite();
                     string output = Interpreter.Interpret(StatementParser.Parse(Tokens, false), ProgramLocation).Data + " <<<";
                     
                     Console.ForegroundColor = ConsoleColor.DarkGray;

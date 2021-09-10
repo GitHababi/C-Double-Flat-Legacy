@@ -15,6 +15,10 @@ namespace C_Double_Flat.Core
         {
             first.ForEach(item => Console.WriteLine(item));
         }
+        public static void ConsoleWrite<T>(this T[] first)
+        {
+            foreach (T item in first)Console.WriteLine(item);
+        }
         public static bool MatchesList<T>(this T first, List<T> second)
         {
             foreach (T item in second) if (first.Equals(item)) return true;

@@ -45,7 +45,7 @@ namespace C_Double_Flat.Core.Parser
             // Removes all no op statements
 
             output1.RemoveAll(a => {
-                return a.GetType() == typeof(NONE);
+                return a.GetType() == typeof(NoOperationStatement);
             });
             return output1;
         }
@@ -93,7 +93,7 @@ namespace C_Double_Flat.Core.Parser
                     return ParseAsName();
                 case TokenType.NXTLN:
                     index++;
-                    return new NONE(); // No-op 
+                    return new NoOperationStatement(); // No-op 
                 case TokenType.RETURN:
                     return ParseReturn();
                 case TokenType.IF:
@@ -120,7 +120,7 @@ namespace C_Double_Flat.Core.Parser
                     return ParseRepeat();
                 default:
                     index++;
-                    return new NONE();
+                    return new NoOperationStatement();
             }
         }
 
@@ -132,7 +132,7 @@ namespace C_Double_Flat.Core.Parser
             {
                 if (TokenHelper.Contains(tokens.ToArray().Skip(index).Take(endpoint - index).ToList(), TokenType.LCURLY))
                 {
-                    FUNCTION output1 = new();
+                    FunctionStatement output1 = new();
                     output1.IsAsName = true;
 
                     List<Token> assigner1 = TokenHelper.Split(tokens.ToArray().Skip(index).ToList(), TokenType.ASSGN)[0];
@@ -180,7 +180,7 @@ namespace C_Double_Flat.Core.Parser
                     return output1;
 
                 }
-                ASSIGN output = new();
+                AssignStatement output = new();
                 output.IsAsName = true;
                 
                 List<Token> assigner = TokenHelper.Split(tokens.ToArray().Skip(index).ToList(), TokenType.ASSGN)[0];
@@ -203,9 +203,9 @@ namespace C_Double_Flat.Core.Parser
             return ParseExpressionStatement();
         }
 
-        private REPEAT ParseRepeat()
+        private RepeatStatement ParseRepeat()
         {
-            REPEAT output = new();
+            RepeatStatement output = new();
 
             index += 1;
             Expect(TokenType.LPAREN);
@@ -227,9 +227,9 @@ namespace C_Double_Flat.Core.Parser
             return output;
         }
 
-        private RUN ParseRun()
+        private RunStatement ParseRun()
         {
-            RUN output = new RUN();
+            RunStatement output = new RunStatement();
 
             index += 1; //moving one over because we just skipped past a return token.
 
@@ -245,9 +245,9 @@ namespace C_Double_Flat.Core.Parser
             return output;
         }
 
-        private LOOP ParseLoop()
+        private LoopStatement ParseLoop()
         {
-            LOOP output = new();
+            LoopStatement output = new();
 
             index++;
             Expect(TokenType.LPAREN);
@@ -270,9 +270,9 @@ namespace C_Double_Flat.Core.Parser
             return output;
         }
 
-        private IF ParseIf()
+        private IfStatement ParseIf()
         {
-            IF output = new IF();
+            IfStatement output = new IfStatement();
             index++;
             Expect(TokenType.LPAREN);
             List<Token> inParenthesis = TokenHelper.GetFromParenthesis(tokens.Skip(index).ToList());
@@ -315,9 +315,9 @@ namespace C_Double_Flat.Core.Parser
             return output;
         }
 
-        private RETURN ParseReturn()
+        private ReturnStatement ParseReturn()
         {
-            RETURN output = new RETURN();
+            ReturnStatement output = new ReturnStatement();
 
             index += 1; //moving one over because we just skipped past a return token.
 
@@ -333,10 +333,10 @@ namespace C_Double_Flat.Core.Parser
             return output;
         }
 
-        private ASSIGN ParseAssignment()
+        private AssignStatement ParseAssignment()
         {
 
-            ASSIGN output = new ASSIGN();
+            AssignStatement output = new AssignStatement();
 
             output.Identifier = currentToken;
 
@@ -354,9 +354,9 @@ namespace C_Double_Flat.Core.Parser
             return output;
         }
 
-        private EXPRESSION ParseExpressionStatement()
+        private ExpressionStatement ParseExpressionStatement()
         {
-            EXPRESSION output = new EXPRESSION();
+            ExpressionStatement output = new ExpressionStatement();
 
             int endpoint = NextStatementEnding();
 
@@ -367,9 +367,9 @@ namespace C_Double_Flat.Core.Parser
             return output;
         }
 
-        private FUNCTION ParseFunctionAssignment()
+        private FunctionStatement ParseFunctionAssignment()
         {
-            FUNCTION output = new FUNCTION();
+            FunctionStatement output = new FunctionStatement();
 
             output.Identifier = currentToken; // Assign name to the function Node
 

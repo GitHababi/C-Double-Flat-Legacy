@@ -92,7 +92,6 @@ namespace C_Double_Flat.Core.Parser
 
                     if (tokens.Count > index + 1)
                     {
-                        Console.WriteLine(tokens[index + 1].Type);
                         if (tokens[index + 1].Type == TokenType.INSRT)
                         {
                             FunctionCallNode funccall = new(new Token(TokenType.ASNAME, current));

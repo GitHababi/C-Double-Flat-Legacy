@@ -213,6 +213,7 @@ namespace C_Double_Flat.Core
                         'n' => '\n',
                         't' => '\t',
                         '"' => '"',
+                        '^' => '^',
                         _ => (string)"^" + _currentChar.ToString(),
                     };
                     Advance();

@@ -30,7 +30,7 @@ namespace C_Double_Flat.Core
             List<Statement> arguments = new List<Statement>();
             for (int i = 0; i < args.Count; i++)
             {
-                ASSIGN a = new ASSIGN();
+                AssignStatement a = new AssignStatement();
                 a.Identifier = args[i];
                 a.IsAsName = false;
                 a.Value = (i >= Inputs.Count) ? ExpressionNode.None : new ExpressionNode(ValueHelper.ValueToToken(Inputs[i]));
