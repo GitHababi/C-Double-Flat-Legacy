@@ -1,4 +1,5 @@
 # C-Double-Flat
+## This version of C-Double-Flat has been deprecated.
 A programming language that you could use, but shouldn't.
 
 ![Cbb Logo](https://cdn.discordapp.com/attachments/690305721845547048/855529288975777812/cbblogo.com.png)
